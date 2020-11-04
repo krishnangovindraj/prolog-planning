@@ -1,6 +1,6 @@
 :- use_module(representation).
 :- use_module(state_manipulation).
-:- use_module(forward_prop).
+:- use_module(forward_dfs).
 
 % Usage: 
 %   ?- representation:initialize_problem(blocks_plan). % Once

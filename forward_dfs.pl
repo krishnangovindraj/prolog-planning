@@ -1,5 +1,5 @@
 % A naive but tidy generic DFS with loop detection from the state representations. 
-:- module(forward_prop, [search_forward_dfs/4]).
+:- module(forward_dfs, [search_forward_dfs/4]).
 :- use_module(state_manipulation).
 
 :- use_module(representation).
