@@ -31,5 +31,9 @@ action(
 
 
 initial_state([on(a,b), on_table(b), on_table(c), clear(a), clear(c)]).
+
+
+:- use_module(state_manipulation, [state_satisfies/2]).
+% Having a goal check as a predicate lets us have multiple, expressive goals.
 goal_check(State, _ActionPath):-
-    member(on(b,c),State).
+    state_satisfies([on(b,c)], State).
