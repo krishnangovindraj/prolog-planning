@@ -26,7 +26,7 @@ action(
     move_block_to_block(X, Y, Z),
     [on(X,Y), clear(X), clear(Z), evaluate(Y\=Z), evaluate(X\=Z)],
     [on(X,Y), clear(Z)],
-    [on(X,Z)]
+    [on(X,Z), clear(Y)]
 ).
 
 
