@@ -11,8 +11,7 @@
 :- use_module(state_hashing).
 
 % Some options
-do_loop_detection(false).
-
+do_loop_detection(true).
 
 %% state_create(+PredicateList, -State).
 state_create(PredicateList, PredicateList).

@@ -13,7 +13,8 @@
 
 % Some settings?
 % If true, We don't compare states, just hashes. If false, We apply actions backwards and see if they cancel out.
-hash_collision_is_loop(true).
+do_loop_detection(true).
+hash_collision_is_loop(false).
 
 
 %% create_state(+PredicateList, -State).
@@ -44,8 +45,8 @@ state_update_loopdetector(ordered_state(_State, Meta), _ActionPath, LD, [Sig|LD]
 
 state_check_loops(ordered_state(_, Meta), LoopDetector, ActionPath):- 
     unpack_meta_signature(Meta, Sig),
-    hash_collision_is_loop(CheckOnlyHashes),
-    loop_check(CheckOnlyHashes, Sig, LoopDetector, ActionPath).
+    do_loop_detection(X),
+    X -> (hash_collision_is_loop(CheckOnlyHashes), loop_check(CheckOnlyHashes, Sig, LoopDetector, ActionPath)).
 
 
 % Good habit so I see compile time if I get the signature wrong.
@@ -61,22 +62,3 @@ update_meta(Meta, DeleteList, AddList, UpdatedMeta):-
 update_sig(InitialSig, DeleteList, AddList, ResultSig):-
     % The combination operator needs to be distributive, commutative, associative.
     update_hash(InitialSig, DeleteList, AddList, ResultSig).
-
-update_sig(InitialSig, DeleteList, AddList, ResultSig):-
-    MOD is 1000000007,
-    update_sig_delete(InitialSig, DeleteList, MOD, TempSig),
-    update_sig_add(TempSig, AddList, MOD, ResultSig).
-    
-
-update_sig_delete(Sig, [], _, Sig).
-update_sig_delete(InSig, [D|DT], MOD, OutSig):-
-    term_hash(D, Piece),
-    TempSig is (InSig + MOD - Piece) mod MOD,  
-    update_sig_delete(TempSig, DT, MOD, OutSig).
-
-update_sig_add(Sig, [], _, Sig).
-update_sig_add(InSig, [A|AT], MOD, OutSig):-
-    term_hash(A, Piece),
-    TempSig is (InSig + Piece) mod MOD,  
-    update_sig_add(TempSig, AT, MOD, OutSig).
-
