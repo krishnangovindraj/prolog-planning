@@ -8,17 +8,9 @@
 search_forward_dfs(StartState, InterestPredicate, MaxDepth, Goals):-
     forward_dfs([], StartState, InterestPredicate, Goals, MaxDepth, []).
 
-%% forward_dfs_level(+NextLevelActions, +ActionPathTillHere, +State, +InterestPredicate, +GoalAcc, -GoalsReached, +MaxDepth, +LoopDetector).
-forward_dfs_level([], _ActionPath, _State, _InterestPredicate, GoalAcc, GoalAcc, _MaxDepth, _LoopDetector).
-forward_dfs_level([NextAction|SiblingActions], ActionPath, State, InterestPredicate, GoalAccIn, GoalAccOut, MaxDepth, LoopDetector):-
-    % Recurse - 
-    (state_apply_action(State, NextAction, ResultState) ->  % In case it fails
-        forward_dfs([NextAction|ActionPath], ResultState, InterestPredicate, BranchGoals, MaxDepth,  LoopDetector); 
-        BranchGoals = []
-    ),
-    % Process remaining children
-    append(BranchGoals, GoalAccIn, GoalAccTemp),
-    forward_dfs_level(SiblingActions, ActionPath, State, InterestPredicate, GoalAccTemp, GoalAccOut, MaxDepth, LoopDetector).
+explore_node(NextAction, ActionPath, State, InterestPredicate, GoalsReached, MaxDepth, LoopDetector):-
+    state_apply_action(State, NextAction, ResultState), % In case it fails
+    forward_dfs([NextAction|ActionPath], ResultState, InterestPredicate, GoalsReached, MaxDepth,  LoopDetector).
 
 % forward_dfs(+ActionPath, +State, +InterestPredicate, -Goals, +MaxDepth_, +LoopDetector)
 forward_dfs(ActionPath, State, _InterestPredicate, [], _, LoopDetector):-
@@ -34,5 +26,9 @@ forward_dfs(ActionPath, State, InterestPredicate, Goals, MaxDepth, LoopDetector)
         MaxDepth1 is MaxDepth - 1,
         expand(ActionPath, State, NextLevel),
         state_update_loopdetector(State, ActionPath, LoopDetector, NextLoopDetector),
-        forward_dfs_level(NextLevel, ActionPath, State, InterestPredicate, GoalsIn, Goals, MaxDepth1, NextLoopDetector)
+        findall(Goals, 
+            (member(NextAction, NextLevel), explore_node(NextAction, ActionPath, State, InterestPredicate, Goals, MaxDepth1, NextLoopDetector)),
+            UnflatGoals
+        ),
+        flatten(UnflatGoals, Goals)
     )).
