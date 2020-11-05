@@ -11,10 +11,7 @@
 :- use_module(representation).
 :- use_module(library(ordsets)).
 
-% Some settings?
-% If true, We don't compare states, just hashes. If false, We apply actions backwards and see if they cancel out.
-do_loop_detection(true).
-hash_collision_is_loop(false).
+:- use_module(state_manipulation, [do_loop_detection/1, hash_collision_is_loop/1]).
 
 
 %% create_state(+PredicateList, -State).

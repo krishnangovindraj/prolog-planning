@@ -5,14 +5,9 @@
 :- use_module(representation).
 
 :- use_module(state_hashing).
+:- use_module(state_manipulation, [do_loop_detection/1, hash_collision_is_loop/1]).
 
 :- dynamic asserted_state/2.
-
-% Some settings?
-% If true, We don't compare states, just hashes. If false, We apply actions backwards and see if they cancel out.
-do_loop_detection(true).
-hash_collision_is_loop(false).
-
 
 reset:-
     retractall(asserted_state(_,_)),

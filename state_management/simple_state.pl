@@ -9,9 +9,7 @@
 % Unfortunately, My state is so simple I haven't been keeping signatures. So all hashes(=0) collide
 :- use_module(loop_detection).
 :- use_module(state_hashing).
-
-% Some options
-do_loop_detection(true).
+:- use_module(state_manipulation, [do_loop_detection/1]).
 
 %% state_create(+PredicateList, -State).
 state_create(PredicateList, PredicateList).
