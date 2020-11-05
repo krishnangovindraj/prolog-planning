@@ -22,3 +22,12 @@ expand(_ActionPath, State, Children):-
  is_applicable_action(ActionSig, State):-
     action(ActionSig, Preconditions, _, _), 
     state_satisfies(Preconditions, State).
+
+
+% verify_problem:-
+%     findall(action(A,B,C,D), action(A,B,C,D), ActionList).
+
+% Write .
+verify_action(action(ActionSig, PreCond, DeleteList, AddList)):-
+    % Ground all preconditions 
+    false.

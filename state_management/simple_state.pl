@@ -33,8 +33,8 @@ state_apply_action(State, Action, ResultState):-
 % state_update_loopdetector(+State, +ActionPath, +CurrentLoopDetector, -UpdatedLoopDetector). 
 state_update_loopdetector(_, _, LD,[0|LD]).
 
-% apply_pending_actions(+PendingActions, +PositiveState, +NegativeState, -UpdatedPositiveState, -UpdatedNegativeState)
+% state_check_loops(+State, +LoopDetector, +ActionPath).
 state_check_loops(_State, LoopDetector, ActionPath):- 
-    do_loop_detection(X),
-    X -> loop_check(false, 0, LoopDetector, ActionPath). 
+    do_loop_detection(true),
+    loop_check(false, 0, LoopDetector, ActionPath). 
 

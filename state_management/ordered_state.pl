@@ -43,10 +43,12 @@ state_apply_action(ordered_state(State, Meta), Action, ordered_state(ResultState
 state_update_loopdetector(ordered_state(_State, Meta), _ActionPath, LD, [Sig|LD]):-
     unpack_meta_signature(Meta, Sig).
 
+% state_check_loops(+State, +LoopDetector, +ActionPath).
 state_check_loops(ordered_state(_, Meta), LoopDetector, ActionPath):- 
+    do_loop_detection(true),
     unpack_meta_signature(Meta, Sig),
-    do_loop_detection(X),
-    X -> (hash_collision_is_loop(CheckOnlyHashes), loop_check(CheckOnlyHashes, Sig, LoopDetector, ActionPath)).
+    hash_collision_is_loop(CheckOnlyHashes),
+    loop_check(CheckOnlyHashes, Sig, LoopDetector, ActionPath).
 
 
 % Good habit so I see compile time if I get the signature wrong.
