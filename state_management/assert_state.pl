@@ -38,6 +38,12 @@ query_asserted_state([evaluate(P)|T], L):-
     P,
     query_asserted_state(T, L).
 
+query_asserted_state([not(P)|T], StateId):-
+    !, % Cut so we don't try the member
+    (is_list(P),!;  writeln('ERROR: L must be a list in not(L). FIX IT!'), fail),
+    not(query_asserted_state(P, StateId)),
+    query_asserted_state(T, StateId).
+
 query_asserted_state([PreCond|T], StateId):-
     asserted_state(StateId, PreCond),
     query_asserted_state(T, StateId).
