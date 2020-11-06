@@ -1,5 +1,5 @@
 :- module(simple_state, 
-    [state_create/2, state_satisfies/2, state_apply_action/3, 
+    [state_create/2, state_satisfies/2, state_apply_action/3, state_cleanup/2,
     state_update_loopdetector/4, state_check_loops/3]).
 :- use_module(planning_utils).
 :- use_module(representation).
@@ -36,3 +36,5 @@ state_check_loops(_State, LoopDetector, ActionPath):-
     do_loop_detection(true),
     loop_check(false, 0, LoopDetector, ActionPath). 
 
+
+state_cleanup(_State, _ActionPath).

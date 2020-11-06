@@ -9,18 +9,15 @@ search_forward_dfs(StartState, InterestPredicate, MaxDepth, Goals):-
     forward_dfs([], StartState, InterestPredicate, Goals, MaxDepth, []).
 
 % ActionPath does not includes Action.
-explore_branch(NextAction, ActionPath, State, InterestPredicate, GoalsReached, MaxDepth, LoopDetector):-
-    state_apply_action(State, NextAction, ResultState), % In case it fails
-    ResultActionPath = [NextAction|ActionPath],
+explore_branch(ActionPath, State, InterestPredicate, GoalsReached, MaxDepth, LoopDetector):-
+    not(state_check_loops(State, LoopDetector, ActionPath)),
+    not(violates_constraints(State, ActionPath)),
 
-    not(state_check_loops(ResultState, LoopDetector, ResultActionPath)),
-    not(violates_constraints(ResultState, ResultActionPath)),
-
-    (call(InterestPredicate, ResultState, ResultActionPath) -> 
-        (GoalsReached = [ResultActionPath|DownbranchGoals]) ; 
+    (call(InterestPredicate, State, ActionPath) -> 
+        (GoalsReached = [ActionPath|DownbranchGoals]) ; 
         (GoalsReached = DownbranchGoals)
     ),
-    forward_dfs(ResultActionPath, ResultState, InterestPredicate, DownbranchGoals, MaxDepth,  LoopDetector).
+    forward_dfs(ActionPath, State, InterestPredicate, DownbranchGoals, MaxDepth,  LoopDetector).
 
 % forward_dfs(+ActionPath, +State, +InterestPredicate, -Goals, +MaxDepth_, +LoopDetector)
 forward_dfs(_ActionPath, _State, _InterestPredicate, [], MaxDepth, _LoopDetector):-
@@ -33,7 +30,14 @@ forward_dfs(ActionPath, State, InterestPredicate, Goals, MaxDepth, LoopDetector)
     expand(ActionPath, State, NextLevel),
     state_update_loopdetector(State, ActionPath, LoopDetector, NextLoopDetector),
     findall(Goals, 
-        (member(NextAction, NextLevel), explore_branch(NextAction, ActionPath, State, InterestPredicate, Goals, MaxDepth1, NextLoopDetector)),
+        (
+            member(NextAction, NextLevel),
+            state_apply_action(State, NextAction, NextState), % In case it fails
+            (
+                explore_branch([NextAction|ActionPath], NextState, InterestPredicate, Goals, MaxDepth1, NextLoopDetector);
+                not(state_cleanup(NextState, [NextAction|ActionPath])) % Runs regardless of explore_branch success/failure.
+            )
+        ),
         UnflatGoals
     ),
     combine_lists(UnflatGoals, Goals).

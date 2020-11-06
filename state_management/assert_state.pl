@@ -1,11 +1,15 @@
+% We clean up states when we're done. That means we can't rely on them for loop detection.
 :- module(assert_state, 
-    [state_create/2, state_satisfies/2, state_apply_action/3, 
+    [state_create/2, state_satisfies/2, state_apply_action/3, state_cleanup/2,
     state_update_loopdetector/4, state_check_loops/3]).
+
+:- use_module(loop_detection).
+:- use_module(state_hashing).
+
 :- use_module(planning_utils).
 :- use_module(representation).
-
-:- use_module(state_hashing).
 :- use_module(state_manipulation, [do_loop_detection/1, hash_collision_is_loop/1]).
+
 
 :- dynamic asserted_state/2.
 
@@ -65,36 +69,20 @@ state_apply_action(assert_state(StateId, Meta), Action, assert_state(ResultState
     update_meta(Meta, DeleteList, AddList, ResultMeta).
 
 % state_update_loopdetector(+State, +ActionPath, +CurrentLoopDetector, -UpdatedLoopDetector). 
-state_update_loopdetector(assert_state(StateId, Meta), _ActionPath, LD, [Sig/StateSize/StateId|LD]):-
-    unpack_meta(Meta, Sig, StateSize).
-
+state_update_loopdetector(assert_state(_StateId, Meta), _ActionPath, LD, [Sig|LD]):-
+    unpack_meta_signature(Meta, Sig).
 
 % state_check_loops(+State, +LoopDetector, +ActionPath).
-state_check_loops(assert_state(StateId, Meta), LoopDetector, _ActionPath):-  
+state_check_loops(assert_state(_StateId, Meta), LoopDetector, ActionPath):- 
     do_loop_detection(true),
-    unpack_meta(Meta, Sig, StateSize),
+    unpack_meta_signature(Meta, Sig),
     hash_collision_is_loop(CheckOnlyHashes),
-    (CheckOnlyHashes -> 
-        (member(Sig/StateSize/_, LoopDetector));
-        (assert_state_loop_check(StateId, Sig, StateSize, LoopDetector, _LazyStateCache))
-    ).
-
-get_lazy_state_cache(StateId, LazyStateCache):-
-    not(ground(LazyStateCache))-> findall(S, asserted_state(StateId,S), LazyStateCache).
-
-% 
-assert_state_loop_check(StateId, Sig, StateSize, [Sig/StateSize/OtherStateId|LoopDetector], LazyStateCache):-
-    get_lazy_state_cache(StateId, LazyStateCache),
-    (
-        (query_asserted_state(LazyStateCache, OtherStateId),!); % This + state size matching is sufficient
-        assert_state_loop_check(StateId, Sig, StateSize, LoopDetector, LazyStateCache)
-    ).
-    
-assert_state_loop_check(StateId, Sig, StateSize, [_|LoopDetector], LazyStateCache):-
-    assert_state_loop_check(StateId, Sig, StateSize, LoopDetector, LazyStateCache).
+    loop_check(CheckOnlyHashes, Sig, LoopDetector, ActionPath).
 
 % Good habit so I see compile time if I get the signature wrong.
-unpack_meta_signature(meta(Sig), Sig).
+unpack_meta_signature(Meta, Sig):-
+    unpack_meta(Meta, Sig, _StateSize).
+
 unpack_meta(meta(Sig, StateSize), Sig, StateSize).
 
 
@@ -109,3 +97,6 @@ update_meta(Meta, DeleteList, AddList, UpdatedMeta):-
 update_sig(InitialSig, DeleteList, AddList, ResultSig):-
     % The combination operator needs to be distributive, commutative, associative.
     update_hash(InitialSig, DeleteList, AddList, ResultSig).
+
+state_cleanup(assert_state(StateId, _Meta), _ActionPath):-
+    retractall(asserted_state(StateId,_)).

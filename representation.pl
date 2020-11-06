@@ -27,5 +27,5 @@ is_applicable_action(ActionSig, State):-
     state_satisfies(Preconditions, State).
 
 % violates_constraints(+State, +ActionPath)
-violates_constraints(State, ActionPath):-
+violates_constraints(State, _ActionPath):-
     constraint(C), not(state_satisfies(C, State)).

@@ -1,7 +1,7 @@
 %% Uses ordered sets (from the ordsets library) instead of regular lists.
 %% Ordered sets are actually just lists, so insertion and deletion is still slow.
 :- module(ordered_state, 
-    [state_create/2, state_satisfies/2, state_apply_action/3, 
+    [state_create/2, state_satisfies/2, state_apply_action/3, state_cleanup/2,
     state_update_loopdetector/4, state_check_loops/3]).
 
 :- use_module(loop_detection).
@@ -9,10 +9,9 @@
 
 :- use_module(planning_utils).
 :- use_module(representation).
-:- use_module(library(ordsets)).
-
 :- use_module(state_manipulation, [do_loop_detection/1, hash_collision_is_loop/1]).
 
+:- use_module(library(ordsets)).
 
 %% create_state(+PredicateList, -State).
 state_create(PredicateList, ordered_state(OrderedSet, Meta)):-
@@ -61,3 +60,4 @@ update_meta(Meta, DeleteList, AddList, UpdatedMeta):-
 update_sig(InitialSig, DeleteList, AddList, ResultSig):-
     % The combination operator needs to be distributive, commutative, associative.
     update_hash(InitialSig, DeleteList, AddList, ResultSig).
+state_cleanup(_State, _ActionPath).
