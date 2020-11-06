@@ -14,6 +14,8 @@ explore_branch(NextAction, ActionPath, State, InterestPredicate, GoalsReached, M
     ResultActionPath = [NextAction|ActionPath],
 
     not(state_check_loops(ResultState, LoopDetector, ResultActionPath)),
+    not(violates_constraints(ResultState, ResultActionPath)),
+
     (call(InterestPredicate, ResultState, ResultActionPath) -> 
         (GoalsReached = [ResultActionPath|DownbranchGoals]) ; 
         (GoalsReached = DownbranchGoals)

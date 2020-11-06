@@ -18,3 +18,8 @@ do_loop_detection(true).
 % assert_state: We compare the states.
 % Always false for simple_state.
 hash_collision_is_loop(false).
+
+
+% Note: Everything holds together purely because the condition is a single list 
+% and the same variables across predicates in the list are the same 
+% and are hence unified together in our various state_satisfies calls. 

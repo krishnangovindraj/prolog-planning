@@ -2,6 +2,8 @@ predicate(on(block, block)).
 predicate(clear(block)).
 
 % Requirement: Any variable that appears (in the add or delete) must be part of the signature.
+% NEGATION: Is a little strange. It should behave like negation-as-failure.
+% Be careful and keep in mind that variables will not retain their value if they were assigned within a not.
 
 % action(action_signature, condition, effects_add, effect_delete )
 
@@ -29,6 +31,8 @@ action(
     [on(X,Z), clear(Y)]
 ).
 
+constraint( [not([on(X,Y), on(Y,Z)])] ).
+constraint( [clear(a)] ).
 
 initial_state([on(a,b), on_table(b), on_table(c), clear(a), clear(c)]).
 
