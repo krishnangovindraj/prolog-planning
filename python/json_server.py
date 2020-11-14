@@ -35,7 +35,7 @@ class Server(BaseHTTPRequestHandler):
         
     # POST echoes the message adding a JSON field
     def do_POST(self):
-        ctype, pdict = cgi.parse_header(self.headers.get('content-type'))
+        ctype, _pdict = cgi.parse_header(self.headers.get('content-type'))
         
         # refuse to receive non-json content
         if ctype != 'application/json':

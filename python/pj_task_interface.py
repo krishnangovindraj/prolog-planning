@@ -1,6 +1,6 @@
 from typing import Dict
 
-from pj_protocol import *
+from pj_protocol import JSONActionRequest, JSONResultList
 
 """ For now, this is a dummy which just returns a (result) list 
 which contains only the requested action-predicate """
