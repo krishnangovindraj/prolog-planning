@@ -14,4 +14,4 @@ class LoadSpreadsheetTask(ActionHandler):
         filename = self.action_request.action_compound.args[1]
         state = State(filename, None)
         self.state_manager.save_state(state)
-        return state, [JSONCompound(LoadSpreadsheetTask.PREDICATE, self.action_request.action_compound.args)]
+        return [ JSONCompound(LoadSpreadsheetTask.PREDICATE, self.action_request.action_compound.args) ]

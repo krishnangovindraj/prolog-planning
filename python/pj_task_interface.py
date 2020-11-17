@@ -19,9 +19,9 @@ class PJTaskInterface:
         action_request = JSONActionRequest.from_dict(request)
         print(action_request)
         handler = self._resolve_handler(action_request)
-        _state, result_list = handler.handle()
+        result_list = handler.handle()
         
-        print([str (r) for r in result_list])
+        print([str(r) for r in result_list])
         return JSONResultList( result_list )
 
     

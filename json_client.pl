@@ -24,7 +24,7 @@ query_synth(QueryTerm):-
     member(QueryTerm, ResultList).
 
 % TODO: Handle errors.
-% Example usage (And test):  Action = test_protocol([nested(foo(s0,s1)),nested(s2)], x_), hit_api("http://127.0.0.1:8001", Action, RL), RL = [Action].
+% Example usage (And test):  Action = test_protocol([nested(foo(s0,s1)),nested(s2)], x_), query_synth("http://127.0.0.1:8001", Action, RL), RL = [Action].
 % hit_api(+Url, +ActionRequest, -ResultList)
 hit_api(Url, ActionRequest, ResultList):-
     parse_ptoj(ActionRequest, ActionRequestObject),

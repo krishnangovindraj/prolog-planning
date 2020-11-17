@@ -58,7 +58,7 @@ class JSONList(PrologJSONProtocolObject):
 
 class JSONResultList(PrologJSONProtocolObject):
     PJ_TYPE = "json_result_list"
-    def __init__(self, results: List[JSONCompound]):
+    def __init__(self, results: List[AbstractJSONTerm]):
         self.results = results
     
     def to_dict(self):

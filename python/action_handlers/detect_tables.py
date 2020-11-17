@@ -30,8 +30,9 @@ class DetectTablesTask(ActionHandler):
             new_state = State.clone_parent(state)
             new_state.tables = ts
             self.state_manager.save_state(new_state)
-            result_list.append( JSONCompound(DetectTablesTask.PREDICATE, [ar_args[0], self.tableset_to_JSONList(ts), ar_args[2]] )  )
-        return state, result_list
+            result = JSONCompound(DetectTablesTask.PREDICATE, [ar_args[0], self.tableset_to_JSONList(ts), ar_args[2]])
+            result_list.append( result )
+        return result_list
 
     # Actually, let's do a graph of connected components [and then try cuts.]
     @staticmethod
