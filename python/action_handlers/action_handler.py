@@ -1,19 +1,28 @@
 from typing import List, Tuple
 
-from idb_state.state import State
-from idb_state.state_manager import StateManager
-from pj_protocol import JSONActionRequest, AbstractJSONTerm
+from idb_state.idb import IDB
+from pj_protocol import JSONActionRequest, AbstractJSONTerm, JSONCompound
+
 class ActionHandler:
-    def __init__(self, state_manager: StateManager, action_request: JSONActionRequest):
+    class ActionPredicate:
+        def to_json_compound(self):
+            raise NotImplementedError("Abstract method")
+        
+        def __str__(self):
+            return str(self.to_json_compound())
+
+    class ErrorPredicate(ActionPredicate):
+        PREDICATE = "error"
+        def __init__(self, msg):
+            self.msg = msg
+        
+        def to_json_compound(self):
+            return JSONCompound(ActionHandler.ErrorPredicate.PREDICATE, [self.msg])
+
+
+    def __init__(self, idb: IDB, action_request: JSONActionRequest):
         self.action_request = action_request
-        self.state_manager = state_manager
+        self.idb = idb
 
-    def load_state(self):
-        return self.state_manager.load_state(self.action_request.state_id)
-
-    def save_state(self, state):
-        new_state_id = self.state_manager.save_state(state)
-        return new_state_id
-
-    def handle(self) -> Tuple[State, List[AbstractJSONTerm]]:
+    def handle(self) -> List[ActionPredicate]:
         raise NotImplementedError("Abstract method")

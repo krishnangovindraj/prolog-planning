@@ -3,7 +3,7 @@ from typing import Dict
 from pj_protocol import JSONActionRequest, JSONResultList
 from action_handlers import ActionHandler, AVAILABLE_TASKS
 
-from idb_state.state_manager import StateManager
+from idb_state.idb import IDB
 
 """ For now, this is a dummy which just a mockup of certain tasks.
 Eventually we could try to build this around the existing synth-services back.
@@ -12,7 +12,7 @@ which contains only the requested action-predicate """
 class PJTaskInterface:
 
     def __init__(self):
-        self.state_manager = StateManager()
+        self.idb = IDB()
         
 
     def process_request(self, request: Dict):
@@ -22,13 +22,13 @@ class PJTaskInterface:
         result_list = handler.handle()
         
         print([str(r) for r in result_list])
-        return JSONResultList( result_list )
+        return JSONResultList( [r.to_json_compound() for r in result_list] )
 
     
     def _resolve_handler(self, request: JSONActionRequest) -> ActionHandler:
         handler = None
         if request.action_compound.pred_name in AVAILABLE_TASKS:
-            handler = AVAILABLE_TASKS[request.action_compound.pred_name](self.state_manager, request)
+            handler = AVAILABLE_TASKS[request.action_compound.pred_name](self.idb, request)
         else:
             raise NameError("Unknown action: " + request.action_compound.pred_name)
         return handler

@@ -6,10 +6,8 @@
 
 % TODO: Result caching layer to not make the same call over and over.
 
-synth_load_spreadsheet(S):-
-    data_source_path(S, F),
-    query_synth(load_spreadsheet(S, F)).
+synth_load_spreadsheet(F, S):-
+    query_synth(load_spreadsheet(F, S)).
 
-synth_detect_table(S,T):-
-    data_source_path(S, F),
-    query_synth(detect_tables(S, T, F)).
+synth_detect_tables(S,T):-
+    query_synth(detect_tables(S, T)).

@@ -1,5 +1,3 @@
-from idb_state.state import State
-
 from .action_handler import ActionHandler
 
 class TestProtocolTask(ActionHandler):

@@ -1,50 +1,79 @@
 from enum import Enum
 from typing import List, Tuple
 from copy import deepcopy
+from os.path import basename, splitext
 # NOT THREAD-SAFE
 # TODO: Uncomment the line which increments state_id :p 
 # TODO: Rewrite the whole thing
 # TODO: (Low hanging), write lazy deep_copies for these types.  
 """ Simplest mockups """
-class State:
-    STATE_ID_AI = 0 # NOT THREAD-SAFE
+class Storable:
+    def __init__(self, provisional_id: str, _in_db: bool = False ):
+        self._in_db = _in_db
+        self._id = provisional_id
 
-    def __init__(self, filename:str, parent_state: 'State'):
-        # State.STATE_ID_AI += 1            # Not thread-safe
-        self.state_id = State.STATE_ID_AI 
+    def get_id(self):
+        return self._id if self._in_db else None
+
+class CellRange:
+    def __init__(self, filename, row_start, col_start, n_rows, n_cols): # sheet_name, 
         self.filename = filename
-        self.parent_state = parent_state    # Can be null
+        # self.sheet_name = sheet_name
+        self.row_start = row_start
+        self.col_start = col_start
+        self.n_rows = n_rows
+        self.n_cols = n_cols
+
+
+# The storable classes
+class SpreadSheet(Storable):
+
+    SS_ID_AI = 0
+    def __init__(self, filename:str, parent_ss: 'SpreadSheet'):
+        super(SpreadSheet, self).__init__(SpreadSheet.get_next_id(filename))
+        self.filename = filename
+        self.parent_spreadsheet = parent_ss    # Can be null
         # self.sheets = {}    # spreadsheet key -> filename maybe?
-        self.tables = None # List[Table]    # None means we don't know
-        self.models = [] # List[Model]      # amidoinitrite? (it = Inductive Databases).
-        # Let's say constraints are stored in a constraint model or something.
+        # self.tables = None # List[str]    # Str are table_ids
+        self.id = None # No ID till it's saved
 
     @staticmethod
-    def clone_parent(parent_state: 'State') -> 'State':
-        new_state = State(parent_state.filename, parent_state)
-        new_state.tables = None if parent_state.tables is None else [Table.from_table(t) for t in parent_state.tables ] # Do I copy or what? For now I copy. Later, we make lazy copy.
-        new_state.models = [m for m in parent_state.models] # Creates a new list so we can add models without changing the original. Again, may want to do lazy.
-        return new_state
+    def get_next_id(filename):
+        SpreadSheet.SS_ID_AI += 1            # Not thread-safe
+        return 'ss_' + splitext(basename(filename))[0] + '_' + str(SpreadSheet.SS_ID_AI)
+
+    # @staticmethod
+    # def clone_parent(parent_ss: 'SpreadSheet') -> 'SpreadSheet':
+    #     new_ss = SpreadSheet(parent_ss.filename, parent_ss)
+    #     # new_ss.tables = None if parent_ss.tables is None else [Table.from_table(t) for t in parent_ss.tables ] # Do I copy or what? For now I copy. Later, we make lazy copy.
+    #     # new_ss.models = [m for m in parent_ss.models] # Creates a new list so we can add models without changing the original. Again, may want to do lazy.
+    #     return new_ss
+
+
 """
 Assumes records are in rows, colums are fields
     row_range: (start_row: int, end_row: int)
     col_range: (start_col: int, n_cols: int)
 """
-class Table:
-    def __init__(self, filename, row_range: Tuple[int,int], col_range: Tuple[int,int]):
-        self.filename = filename
-        self.row_range = row_range
-        self.col_range = col_range
+class Table(Storable):
+
+    TBL_ID_AI = 0
+    def __init__(self, origin_location: CellRange, parent: 'Table'):
+        super(Table, self).__init__(Table.get_next_id())
+        self.origin = origin_location 
         self.records = []
         self.fields = []
 
-    def get_id_atom(self):
-        from os.path import basename, splitext
-        return "%s__%d_%d__%d_%d"%(self.filename, self.row_range[0], self.row_range[1], self.col_range[0], self.col_range[1])
+    
+    @staticmethod
+    def get_next_id():
+        Table.TBL_ID_AI += 1            # Not thread-safe
+        return 'tbl_' + str(Table.TBL_ID_AI)
+
     # Easy creation from earlier 
     @staticmethod
     def from_table(src: 'Table') -> 'Table':
-        new_table = Table(src.filename, src.row_range, src.col_range)
+        new_table = Table(src.origin, src)
         new_table.records = [ [v for v in r]  for r in src.records]
         new_table.fields = [f.clone() for f in src.fields] # New list -> can add/remove fields.  deep copy ONLY because of missing :(. Again, lazy copies would be cool
         return new_table

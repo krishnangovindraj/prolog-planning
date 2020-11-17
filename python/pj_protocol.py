@@ -90,3 +90,8 @@ class JSONActionRequest(PrologJSONProtocolObject):
     
     def __str__(self):
         return "JSONActionRequest(%s)"%( str(self.action_compound) )
+
+class JSONErrorCompound(JSONCompound):
+    def __init__(self, msg):
+        super(JSONErrorCompound, self).__init__("error", [msg])
+    
