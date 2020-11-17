@@ -6,7 +6,6 @@ import json
 import cgi
 
 from pj_task_interface import PJTaskInterface
-
 from pj_protocol import PrologJSONProtocolObject
 
 # https://docs.python.org/3/library/json.html
@@ -19,11 +18,15 @@ class PrologJSONProtocolObjectEncoder(json.JSONEncoder):
 
 
 class Server(BaseHTTPRequestHandler):
+    
+    task_interface = PJTaskInterface()
+
     def _set_headers(self):
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.end_headers()
-        
+
+
     def do_HEAD(self):
         self._set_headers()
         
@@ -48,7 +51,7 @@ class Server(BaseHTTPRequestHandler):
         request_body = json.loads(self.rfile.read(length))
         
         # add a property to the object, just to mess with data
-        response_body = PJTaskInterface.process_request(request_body)
+        response_body = Server.task_interface.process_request(request_body)
         
         # send the message back
         self._set_headers()

@@ -1,8 +1,14 @@
+:- module(json_client, [query_synth/1]).
 % Code which lets us interface with python functions.
+
 
 :- use_module(library(http/http_open)).     % For the actual http_open call.
 :- use_module(library(http/http_json)).     % Includes the post_data_hook that enables json support. 
 :- use_module(library(http/json_convert)).  % For easy conversion between terms & json
+
+% Couple of settings:
+backend_url('http://127.0.0.1:8001').
+
 
 % Our protocol terms
 :- json_object
@@ -10,6 +16,12 @@
     json_list(elements: list) + [type=json_list],
     json_action_request(action: json_compound/1) + [type=json_action_request],
     json_result_list(results: list) + [type=json_result_list].
+
+
+query_synth(QueryTerm):-
+    backend_url(Url),
+    hit_api(Url, QueryTerm, ResultList),
+    member(QueryTerm, ResultList).
 
 % TODO: Handle errors.
 % Example usage (And test):  Action = test_protocol([nested(foo(s0,s1)),nested(s2)], x_), hit_api("http://127.0.0.1:8001", Action, RL), RL = [Action].
@@ -50,5 +62,8 @@ parse_ptoj(T, json_compound(L)):-
     T =.. RawList,
     maplist(parse_ptoj, RawList, L).
 
+parse_ptoj(T,var__):-
+    not(compound(T)), var(T), !.
+
 parse_ptoj(T,T):-
-    not(compound(T)).
+    not(compound(T)), not(var(T)).

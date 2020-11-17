@@ -1,6 +1,6 @@
 # from __future__ import annotations
 from typing import List
-
+# TODO: use state_id in JSONActionRequest's
 
 class PrologJSONProtocolObject:
     def to_dict(self):
@@ -77,6 +77,8 @@ class JSONActionRequest(PrologJSONProtocolObject):
     PJ_TYPE = "json_action_request"
     def __init__(self, action_compound):
         self.action_compound = action_compound
+        self.state_id = 0 # TODO: Use state_ids
+
 
     def to_dict(self):
         return {"type": JSONActionRequest.PJ_TYPE, "action": self.action_compound.to_dict()}
