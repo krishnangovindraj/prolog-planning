@@ -5,6 +5,7 @@
     data_source_path/2. % 
 
 % TODO: Result caching layer to not make the same call over and over.
+% TODO: Better argument names
 
 synth_load_spreadsheet(F, S):-
     query_synth(load_spreadsheet(F, S)).
@@ -14,3 +15,6 @@ synth_detect_tables(S,T):-
 
 synth_get_field_types(T, FT):-
     query_synth(get_field_types(T,FT)).
+
+synth_get_table_structure(T, TS):-
+    query_synth(get_table_structure(T, TS)).

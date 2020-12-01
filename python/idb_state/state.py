@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import IntEnum
 from typing import List, Tuple
 from copy import deepcopy
 from os.path import basename, splitext
@@ -61,8 +61,8 @@ class Table(Storable):
     def __init__(self, origin_location: CellRange, parent: 'Table'):
         super(Table, self).__init__(Table.get_next_id())
         self.origin = origin_location 
-        self.records = []
-        self.fields = []
+        self.records = None
+        self.fields = None
 
     
     @staticmethod
@@ -104,7 +104,7 @@ class Field:
     def clone(self):
         return deepcopy(self)
     
-    class DataTypes(Enum):
+    class DataTypes(IntEnum):
         DT_BLANK = 0    # Blank. UNKNOWN is states = None anyway.  
         
         DT_REAL = 1     # 

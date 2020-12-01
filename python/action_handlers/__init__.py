@@ -5,10 +5,13 @@ from .test_protocol import TestProtocolTask
 from .detect_tables import DetectTablesTask
 from .load_spreadsheet import LoadSpreadsheetTask
 from .get_fields import GetFieldTypesTask
+from .get_table_structure import GetTableStructureTask
+
 AVAILABLE_TASKS = {
     TestProtocolTask.PREDICATE: TestProtocolTask,
 
     DetectTablesTask.PREDICATE: DetectTablesTask,
     LoadSpreadsheetTask.PREDICATE: LoadSpreadsheetTask,
-    GetFieldTypesTask.PREDICATE: GetFieldTypesTask
+    GetFieldTypesTask.PREDICATE: GetFieldTypesTask,
+    GetTableStructureTask.PREDICATE: GetTableStructureTask
 }
