@@ -7,14 +7,18 @@
 % TODO: Result caching layer to not make the same call over and over.
 % TODO: Better argument names
 
-synth_load_spreadsheet(F, S):-
-    query_synth(load_spreadsheet(F, S)).
+% det: +, -
+synth_load_spreadsheet(Filename, SpreadsheetId):-
+    query_synth(load_spreadsheet(Filename, SpreadsheetId)).
 
-synth_detect_tables(S,T):-
-    query_synth(detect_tables(S, T)).
+% nondet: +, -
+synth_detect_tables(SpreadsheetId,TableId):-
+    query_synth(detect_tables(SpreadsheetId, TableId)).
 
-synth_get_field_types(T, FT):-
-    query_synth(get_field_types(T,FT)).
+% nondet: +, -
+synth_get_field_types(TableId, FieldTypes):-
+    query_synth(get_field_types(TableId,FieldTypes)).
 
-synth_get_table_structure(T, TS):-
-    query_synth(get_table_structure(T, TS)).
+% nondet: +, -
+synth_get_table_structure(TableId, TableStructurePreds):-
+    query_synth(get_table_structure(TableId, TableStructurePreds)).
