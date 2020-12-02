@@ -48,7 +48,7 @@ class GetTableStructureTask(ActionHandler):
         # Pack em all up
         structure = [n_fields_pred, data_range_pred] + header_row_preds + field_titles_preds 
         
-        return [ GetTableStructureTask.GetTableStructurePredicate(req.table_id, JSONList(structure)) ]
+        return [ GetTableStructureTask.GetTableStructurePredicate(req.table_id, s) for s in structure ]
     
 
     def detect_header_rows(self, table):
