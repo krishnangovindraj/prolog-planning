@@ -1,13 +1,16 @@
+% I'm not sure I've implemented this right.
+
 %% Uses ordered sets (from the ordsets library) instead of regular lists.
 %% Ordered sets are actually just lists, so insertion and deletion is still slow.
 :- module(ordered_state, 
     [state_create/2, state_satisfies/2, state_apply_action/3, state_cleanup/2,
     state_update_loopdetector/4, state_check_loops/3]).
 
+:- consult(state_query).
+
 :- use_module(loop_detection).
 :- use_module(state_hashing).
 
-:- use_module(planning_utils).
 :- use_module(representation).
 :- use_module(state_manipulation, [do_loop_detection/1, hash_collision_is_loop/1]).
 
@@ -20,10 +23,12 @@ state_create(PredicateList, ordered_state(OrderedSet, Meta)):-
     unpack_meta(Meta, Sig).
 
 %state_satisfies(+Preconditions, +State).
-state_satisfies(Preconditions, ordered_state(State, _Meta)):-
+state_satisfies(Preconditions, State):-
     % We cannot take much advantage of the sorted-ness because it does not produce all assignments.
-    query_in_list(Preconditions, State).
+    query_state(Preconditions, State).
 
+check_predicate_in_state(Predicate, ordered_state(State, _)):-
+    member(Predicate, State).
 
 % Applies action on state 
 % state_apply_action(+State, +Action, -ResultState)

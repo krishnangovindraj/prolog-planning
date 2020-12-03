@@ -1,5 +1,6 @@
-predicate(on(block, block)).
-predicate(clear(block)).
+
+planning_predicate(on(block, block)).
+planning_predicate(clear(block)).
 
 % Requirement: Any variable that appears (in the add or delete) must be part of the signature.
 % NEGATION: Is a little strange. It should behave like negation-as-failure.
