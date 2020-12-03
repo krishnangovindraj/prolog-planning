@@ -3,10 +3,11 @@
     [state_create/2, state_satisfies/2, state_apply_action/3, state_cleanup/2,
     state_update_loopdetector/4, state_check_loops/3]).
 
+:- consult(state_query).
+
 :- use_module(loop_detection).
 :- use_module(state_hashing).
 
-:- use_module(planning_utils).
 :- use_module(representation).
 :- use_module(state_manipulation, [do_loop_detection/1, hash_collision_is_loop/1]).
 
@@ -34,24 +35,10 @@ state_create(PredicateList, assert_state(StateId, Meta)):-
 
 %state_satisfies(+Preconditions, +State).
 state_satisfies(Preconditions, assert_state(StateId, _Meta)):-
-    query_asserted_state(Preconditions, StateId).
+    query_state(Preconditions, StateId).
 
-query_asserted_state([], _StateId).
-query_asserted_state([evaluate(P)|T], L):-
-    !, % Cut so we don't try the member
-    P,
-    query_asserted_state(T, L).
-
-query_asserted_state([not(P)|T], StateId):-
-    !, % Cut so we don't try the member
-    (is_list(P),!;  writeln('ERROR: L must be a list in not(L). FIX IT!'), fail),
-    not(query_asserted_state(P, StateId)),
-    query_asserted_state(T, StateId).
-
-query_asserted_state([PreCond|T], StateId):-
-    asserted_state(StateId, PreCond),
-    query_asserted_state(T, StateId).
-
+check_predicate_in_state(Predicate, StateId):-
+    asserted_state(StateId, Predicate).
 
 % Applies action on state 
 % state_apply_action(+State, +Action, -ResultState)

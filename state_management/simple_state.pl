@@ -1,9 +1,11 @@
 :- module(simple_state, 
     [state_create/2, state_satisfies/2, state_apply_action/3, state_cleanup/2,
     state_update_loopdetector/4, state_check_loops/3]).
-:- use_module(planning_utils).
-:- use_module(representation).
 
+% Because it's hard otherwise
+:- consult(state_query).
+
+:- use_module(representation).
 
 % In case we want to do loop detection
 % Unfortunately, My state is so simple I haven't been keeping signatures. So all hashes(=0) collide
@@ -17,7 +19,11 @@ state_create(PredicateList, PredicateList).
  % Produces every applicable action signature. Will be ground if State is ground.
  %state_satisfies(+Preconditions, +State).
  state_satisfies(Preconditions, State):-
-    query_in_list(Preconditions, State).
+    query_state(Preconditions, State).
+    %query_in_list(Preconditions, State).
+
+check_predicate_in_state(Predicate, State):-
+    member(Predicate, State).
 
 % Applies action on state 
 % state_apply_action(+State, +Action, -ResultState)
