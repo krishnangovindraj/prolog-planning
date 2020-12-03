@@ -37,11 +37,15 @@ state_create(PredicateList, assert_state_d(StateId, Meta)):-
     foreach(member(X, PredicateList), assert(asserted_state_d(StateId, X))).
 
 %state_satisfies(+Preconditions, +State).
-state_satisfies(Preconditions, assert_state_d(StateId, _Meta)):-
-    query_state(Preconditions, StateId).
+state_satisfies(Preconditions, State):-
+    query_state(Preconditions, State).
 
-check_predicate_in_state(Predicate, StateId):-
+check_predicate_in_state(Predicate, assert_state_d(StateId, _Meta)):-
     asserted_state_d(StateId, Predicate).
+
+% Special for the loop detector 
+query_asserted_state_from_id(Preconditions, StateId):-
+    query_state(Preconditions, assert_state_d(StateId, missing_meta)).
 
 % Applies action on state 
 % state_apply_action(+State, +Action, -ResultState)
@@ -80,7 +84,7 @@ get_lazy_state_cache(StateId, LazyStateCache):-
 assert_state_d_loop_check(StateId, Sig, StateSize, [Sig/StateSize/OtherStateId|LoopDetector], LazyStateCache):-
     get_lazy_state_cache(StateId, LazyStateCache),
     (
-        (query_state(LazyStateCache, OtherStateId),!); % This + state size matching is sufficient
+        (query_asserted_state_from_id(LazyStateCache, OtherStateId),!); % This + state size matching is sufficient
         assert_state_d_loop_check(StateId, Sig, StateSize, LoopDetector, LazyStateCache)
     ).
     

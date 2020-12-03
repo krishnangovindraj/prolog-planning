@@ -34,10 +34,10 @@ state_create(PredicateList, assert_state(StateId, Meta)):-
     foreach(member(X, PredicateList), assert(asserted_state(StateId, X))).
 
 %state_satisfies(+Preconditions, +State).
-state_satisfies(Preconditions, assert_state(StateId, _Meta)):-
-    query_state(Preconditions, StateId).
+state_satisfies(Preconditions, State):-
+    query_state(Preconditions, State).
 
-check_predicate_in_state(Predicate, StateId):-
+check_predicate_in_state(Predicate, assert_state(StateId, _Meta)):-
     asserted_state(StateId, Predicate).
 
 % Applies action on state 

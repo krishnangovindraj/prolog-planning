@@ -1,6 +1,7 @@
 :- module(representation, [
     action/4, initial_state/1, goal_check/2, constraint/1,
-    action_signature/1, expand/3, is_applicable_action/2, violates_constraints/2]).
+    action_signature/1, expand/3, is_applicable_action/2, violates_constraints/2,
+    evaluate_predicate/2, simulate_predicate/2]).
 
 :- use_module(state_manipulation, [state_satisfies/2]).
 
@@ -29,3 +30,12 @@ is_applicable_action(ActionSig, State):-
 % violates_constraints(+State, +ActionPath)
 violates_constraints(State, _ActionPath):-
     constraint(C), not(state_satisfies(C, State)).
+
+
+
+% _State is for future use with simulate.
+evaluate_predicate(Predicate, _State):- 
+    Predicate. % call
+
+simulate_predicate(_Predicate, _State):-
+    writeln("Simulate doesnt' exist yet :("), fail.

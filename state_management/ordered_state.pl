@@ -23,11 +23,11 @@ state_create(PredicateList, ordered_state(OrderedSet, Meta)):-
     unpack_meta(Meta, Sig).
 
 %state_satisfies(+Preconditions, +State).
-state_satisfies(Preconditions, ordered_state(State, _Meta)):-
+state_satisfies(Preconditions, State):-
     % We cannot take much advantage of the sorted-ness because it does not produce all assignments.
     query_state(Preconditions, State).
 
-check_predicate_in_state(Predicate, State):-
+check_predicate_in_state(Predicate, ordered_state(State, _)):-
     member(Predicate, State).
 
 % Applies action on state 
