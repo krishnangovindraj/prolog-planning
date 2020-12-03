@@ -27,6 +27,7 @@ class GetTableStructureTask(ActionHandler):
         n_fields = max([0] + [len(r) for r in table.records])        
         # Do some work to detect header rows
         header_rows = self.detect_header_rows(table)
+        table.header_rows = header_rows
         # Extract the values of each of the header rows into a list.
         field_headers = [ [table.records[h][j]  for h in header_rows] for j in range(n_fields) ]
         # For data range

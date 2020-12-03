@@ -1,10 +1,17 @@
+:- module(synth_wrangling, [synth_detect_tensors_impl/3]).
+
+:- use_module(state_manipulation).
 % Not actually wrangling, but I can't spend time thinking about good names.
-% :- use_module(synth_rpc).
 
 
-detect_tensors(TableId, tensor(AxisLabels, IndexMap)):-
+synth_detect_tensors_impl(TableId, tensor(TableId, AxisLabels, IndexMap), State):-
+
+    % DO NOT CALL ONE FROM THE OTHER!
+    %TODO:  REPLACE THIS:
     findall(ST, synth_get_table_structure(TableId, ST), StructurePreds), 
-        
+    % WITH THIS:findall( SP, state_satisfies(State, table_structure(TableId, SP) ), StructurePreds),
+
+
     findall(FT,
         member(table_field_title(TableId, FI, FT), StructurePreds),
         FieldList),
@@ -48,4 +55,6 @@ create_index_map(StructurePreds, HeaderAxes, IndexMap):-
                 (member(A2, Axis2), member(table_field_title(_TableId, FI, [A1, A2]), StructurePreds))
                 , SubMap )
         ),
-        IndexMap).
+        IndexMap
+    ).
+

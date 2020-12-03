@@ -1,4 +1,8 @@
-:- use_module(json_client).
+
+% :- module(synth_rpc, []).
+:- use_module('../json_client.pl').
+
+:- use_module(synth_wrangling).
 
 :- dynamic
     data_source/2,
@@ -7,6 +11,10 @@
 % TODO: Result caching layer to not make the same call over and over.
 % TODO: Better argument names
 
+
+%   %   %   %   %
+%   Remote calls 
+%   %   %   %   %
 % det: +, -
 synth_load_spreadsheet(Filename, SpreadsheetId):-
     query_synth(load_spreadsheet(Filename, SpreadsheetId)).
@@ -22,3 +30,16 @@ synth_get_field_types(TableId, FieldTypes):-
 % nondet: +, -
 synth_get_table_structure(TableId, TableStructurePreds):-
     query_synth(get_table_structure(TableId, TableStructurePreds)).
+
+% +, -
+synth_learn_countor(tensor(TableId, AxisLabels, IndexMap), Constraints):-
+    query_synth( learn_countor(TableId, AxisLabels, IndexMap, Constraints) ).
+
+
+
+%   %   %   %   %
+%   Local calls 
+%   %   %   %   %
+
+synth_contains_tensor(TableId, tensor(TableId, AxisLabels, IndexMap), State):-
+    synth_detect_tensors_impl(TableId, tensor(TableId, AxisLabels, IndexMap), State).

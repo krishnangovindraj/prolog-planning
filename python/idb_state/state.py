@@ -63,8 +63,14 @@ class Table(Storable):
         self.origin = origin_location 
         self.records = None
         self.fields = None
-
+        self.header_rows = None
     
+    def get_records(self, include_headers=True):
+        if include_headers:
+            return [r for r in self.records]
+        else:
+            return [r for i,r in enumerate(self.records) if i not in self.header_rows ]
+
     @staticmethod
     def get_next_id():
         Table.TBL_ID_AI += 1            # Not thread-safe
