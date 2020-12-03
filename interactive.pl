@@ -1,8 +1,11 @@
-
+:- module(interactive, [interactive_init/1,
+    query_current_action_path/1, query_current_state/1, apply_action_path/1, 
+    perform_search/3, perform_search_all_goals/3]).
 % Some interaction would be nice when you don't know the result of actions.
 :-use_module(representation).
 :-use_module(state_manipulation).
 :-use_module(planning_utils, [state_query_goal_check/3]).
+:-use_module(forward_dfs).
 
 :- dynamic interactive_stack_element/3. % P, StackPrev, State 
 
@@ -53,7 +56,7 @@ perform_search(GoalPredicates, Depth, GoalPath):-
     member(GoalPath, GoalPaths).
 
 perform_search_all_goals(GoalPredicates, Depth, GoalPaths):-
-    GoalCheck = state_query_goal_check(GoalPredicates),
+    GoalCheck = planning_utils:state_query_goal_check(GoalPredicates),
     interactive_stack_peek(interactive_state(_, CurrentState)),
     search_forward_dfs(CurrentState, GoalCheck, Depth, GoalPaths).
 
