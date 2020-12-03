@@ -1,6 +1,7 @@
 :- module(simple_state, 
     [state_create/2, state_satisfies/2, state_apply_action/3, state_cleanup/2,
-    state_update_loopdetector/4, state_check_loops/3]).
+    state_update_loopdetector/4, state_check_loops/3,
+    check_predicate_in_state/2]).
 
 % Because it's hard otherwise
 :- consult(state_query).

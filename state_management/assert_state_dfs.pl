@@ -2,7 +2,8 @@
 % For other search techniques, use the assert_state version that uses the action-replay loop checking.
 :- module(assert_state_dfs, 
     [state_create/2, state_satisfies/2, state_apply_action/3, state_cleanup/2,
-    state_update_loopdetector/4, state_check_loops/3]).
+    state_update_loopdetector/4, state_check_loops/3,
+    check_predicate_in_state/2]).
 
 
 :- consult(state_query).

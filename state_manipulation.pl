@@ -1,7 +1,8 @@
 :- module(state_manipulation, [
     state_create/2, state_satisfies/2, state_apply_action/3, state_cleanup/2,
     state_update_loopdetector/4, state_check_loops/3,
-    do_loop_detection/1, hash_collision_is_loop/1]).
+    do_loop_detection/1, hash_collision_is_loop/1,
+    check_predicate_in_state/2]).
 
 % :- use_module('state_management/simple_state.pl').
 % :- use_module('state_management/ordered_state.pl').
