@@ -1,4 +1,5 @@
 :- module(representation, [
+    initialize_problem/1,
     action/4, initial_state/1, goal_check/2, constraint/1,
     action_signature/1, expand/3, is_applicable_action/2, violates_constraints/2,
     evaluate_predicate/2, simulate_predicate/2]).
@@ -8,8 +9,19 @@
 :- dynamic action/4, initial_state/1, goal_check/2, constraint/1.
 
 % initialize_problem(+ProblemFile).
+:- dynamic initialize_problem__done/1.
+
 initialize_problem(ProblemFile):-
-    consult(ProblemFile).
+    initialize_problem__done(P),!,
+    (
+        (P = ProblemFile) -> 
+        (writeln("WARN: Already initialized")); 
+        (writeln(["ERROR: Session already initialized with ", ProblemFile]), fail)
+    ).
+
+initialize_problem(ProblemFile):- 
+    consult(ProblemFile),
+    assert(initialize_problem__done(ProblemFile)).
 
 % action_signature(?ActionSig).
 action_signature(AS):-
@@ -37,5 +49,10 @@ violates_constraints(State, _ActionPath):-
 evaluate_predicate(Predicate, _State):- 
     Predicate. % call
 
+% You can simulate certain actions so the planner can hyptothesize about likely outcomes and look more steps ahead.
+% Be careful when using unbound variables. They're powerful but quirky.
+% If you want a predicate to be evaluated instead of simulated, just don't declare a simulation
+% If you don't want that to happen and want the user to explicitly choose to perform this action (and dependencies), 
+% you can fail (or succeed by adding a must_evaluate(Action) and then specify must_evaluate(_) as part a potential  goal?)
 simulate_predicate(_Predicate, _State):-
     writeln("Simulate doesnt' exist yet :("), fail.
