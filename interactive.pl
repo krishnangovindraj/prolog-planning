@@ -9,25 +9,17 @@
 
 :- dynamic interactive_stack_element/3. % P, StackPrev, State 
 
-interactive_init(_ProblemFile):-
+interactive_init(InitialStatePredicateList):-
     nb_current(v_interactive_stack_top, _),!,
     writeln("ERROR: Interactive session active"),
     fail.
 
-interactive_init(ProblemFile):-
-    interactive_stack_top_set(null),
-    initialize_problem(ProblemFile),
-    initial_state(InitialPredicates),
-    state_create(InitialPredicates, S),
+interactive_init(InitialStatePredicateList):-
+    nb_setval(v_interactive_stack_top, null),
+    state_create(InitialStatePredicateList, S),
     interactive_stack_push(interactive_state([],S)).
 
 % det: + , but might fail lol.
-apply_action_path(ActionPath):-
-    ground(ActionPath),
-    apply_action_path_do(ActionPath, ResultState),
-    interactive_stack_push(ResultState). % Just to be sure.
-
-
 query_current_action_path(ActionPath):-
     interactive_stack_peek(interactive_state(ActionPath, _)).
 
@@ -49,6 +41,16 @@ query_current_state(StateQuery):-
         state_satisfies([StateQuery], CurrentState)
     ). % ohboy
 
+
+get_applicable_action(Action):-
+    interactive_stack_peek(interactive_state(CurrentActionPath, CurrentState)),
+    expand(CurrentActionPath, CurrentState, Action).
+
+apply_action_path(ActionPath):-
+    ground(ActionPath),
+    apply_action_path_do(ActionPath, ResultState),
+    interactive_stack_push(ResultState). % Just to be sure.
+    
 
 % e.g.: perform_search([on(b,c)], 4, Path).
 perform_search(GoalPredicates, Depth, GoalPath):-
