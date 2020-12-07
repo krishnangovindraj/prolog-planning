@@ -9,31 +9,23 @@ action(
     [spreadsheet(S)]
     ).
 
-% action(
-%     detect_tables(S,T), 
-%     [spreadsheet(S), evaluate(synth_detect_table(S,T))], % not(table(S,T)) can be used if the tables are all added at once.
-%     [],
-%     [table(S, T)]
-% ).
-
-
 action(
-    detect_all_tables(S,TableList), 
-    [spreadsheet(S), not(all_tables_detected(S)), evaluate(synth_detect_table(S,TableList))], 
+    detect_tables(S,TableList), 
+    [spreadsheet(S), not(done_detect_tables(S)), evaluate(synth_detect_tables(S,TableList))], 
     [],
-    [all_tables_detected(S)| TableList]
+    [done_detect_tables(S)| TableList]
 ).
 
 action(
     get_field_types(T, FieldTypeList),
-    [ table(S,T),   ],
+    [ table(S,T), not(done_get_field_types(T)), evaluate(synth_get_field_types(T, FieldTypeList)) ],
     [ ],
-    [ field_type(FT) ] % This might get confusing since FT is a compound field_type(X,Y,Z)
-)
+    [ done_get_field_types(T) | FieldTypeList ] % This might get confusing since FT is a compound field_type(X,Y,Z)
+).
 
 action(
     detect_tensors(Tbl, Tsr),
     [table(S,Tbl), evaluate(synth_detect_tensors(Tbl, Tsr))],
     [],
     [ tensor(Tbl, Tsr) ]    
-)
+).

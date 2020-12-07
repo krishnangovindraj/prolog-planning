@@ -50,6 +50,7 @@ class DetectTablesTask(ActionHandler):
             
             result = DetectTablesTask.DetectTablesPredicate(ss.get_id(), self.tableset_to_JSONList(ss.get_id(), ts))
             result_list.append( result )
+            
         return result_list
 
     # Actually, let's do a graph of connected components [and then try cuts.]

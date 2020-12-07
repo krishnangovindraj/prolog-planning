@@ -1,4 +1,5 @@
 % Do blocks plan through evaluate/2 & other unconventional prolog stuff.
+% Remember: Pure variables in the AddList or DeleteList are a no-no if you want to do backwards planning. 
 :- use_module(state_manipulation).
 
 planning_predicate(on(block, block)).
