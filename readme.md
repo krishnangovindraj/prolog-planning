@@ -36,7 +36,8 @@ If/When I (or you?) sit down to finally write a backwards planner, I will hopefu
     
     $ prolog testbed.pl
     ?- representation:initialize_problem('examples/blocks_plan.pl').
-    ?- initial_state(_SL), state_create(_SL, _S),!, search_forward_dfs(_S, goal_check, 4, GL).
+    ?- initial_state(InitialPredicates), state_create(InitialPredicates, _S),!, 
+            search_forward_dfs(_S, goal_check, 4, GL).
         InitialPredicates = [on(a, b), on_table(b), on_table(c), clear(a), clear(c)],
         _S = assert_state_d(103, meta(56283180, 5)), % Depends on the state-rep in state_manipulation.pl
         GL = [[move_from_table(b, c), move_to_table(a, b)], [move_from_table(b, c), move_to_table(a, c), move_block_to_block(a, b, c)]]. % The goal list, yay!
@@ -44,7 +45,8 @@ If/When I (or you?) sit down to finally write a backwards planner, I will hopefu
 **Using the interative file**: 
     $ prolog testbed.pl
     ?- use_module(interactive).
-    ?- interactive_init('examples/blocks_plan.pl').
+    ?- representation:initialize_problem('examples/blocks_plan.pl').
+    ?- initial_state(SL), interactive_init(SL).
         true. % HIT ENTER!!!
 
     ?- query_current_state(P). % Wanna see the state?
@@ -67,4 +69,3 @@ If/When I (or you?) sit down to finally write a backwards planner, I will hopefu
         P = on_table(a) ;
         P = clear(b) ;
         P = on(b, c).
-
