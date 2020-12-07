@@ -4,21 +4,14 @@
 % Not actually wrangling, but I can't spend time thinking about good names.
 
 
-synth_detect_tensors_impl(TableId, tensor(TableId, AxisLabels, IndexMap), State):-
-
-    % DO NOT CALL ONE FROM THE OTHER!
-    %TODO:  REPLACE THIS:
-    findall(ST, synth_get_table_structure(TableId, ST), StructurePreds), 
-    % WITH THIS:findall( SP, state_satisfies(State, table_structure(TableId, SP) ), StructurePreds),
-
-
-    findall(FT,
-        member(table_field_title(TableId, FI, FT), StructurePreds),
-        FieldList),
+synth_detect_tensors_impl(TableId, FieldHeaderList, tensor(TableId, AxisLabels, IndexMap)):-
     % TODO: Fix inefficient declarative:
-    rec_header_factorize(FieldList, F1, F2),
+    findall(FT,
+        member(field_header(TableId, _FI, FT), FieldHeaderList),
+        FieldHeaderNamesList),
+    rec_header_factorize(FieldHeaderNamesList, F1, F2),
     AxisLabels = [F1,F2], % Index map 
-    create_index_map(StructurePreds, AxisLabels, IndexMap). % To test
+    create_index_map(FieldHeaderList, AxisLabels, IndexMap). % To test
 
 % TODO: Make recursive so we can do more than 3 dimensions                                                                                                                           
 % And maybe we can avoid the false at the end?
@@ -46,13 +39,13 @@ rec_header_factorize(HeaderList, Factor1, Factor2):-
 
 
 % TODO: Makre recursive for more dimensions.
-create_index_map(StructurePreds, HeaderAxes, IndexMap):-
+create_index_map(FieldHeaderList, HeaderAxes, IndexMap):-
     [Axis1,Axis2] = HeaderAxes,
     findall(SubMap,
         (
             member(A1, Axis1),
             findall(FI, 
-                (member(A2, Axis2), member(table_field_title(_TableId, FI, [A1, A2]), StructurePreds))
+                (member(A2, Axis2), member(field_header(_TableId, FI, [A1, A2]), FieldHeaderList))
                 , SubMap )
         ),
         IndexMap

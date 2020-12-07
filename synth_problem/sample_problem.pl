@@ -1,4 +1,4 @@
-:- consult(synth_evaluate).
+:- consult(synth_domain).
 % This part only does the interfacing between the (python) components and prolog.
 % Here's a test run: 
 % data_source_path(test_tables, F), synth_load_spreadsheet(F,S), synth_detect_tables(S,TL), member(table(S, T) , TL), synth_get_field_types(T, TF) 

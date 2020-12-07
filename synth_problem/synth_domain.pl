@@ -1,5 +1,5 @@
-:- consult(synth_evaluate).
-:- consult(synth_simulate).
+:- use_module(synth_evaluate).
+% :- use_module(synth_simulate).
 
 
 action(
@@ -10,22 +10,39 @@ action(
     ).
 
 action(
-    detect_tables(S,TableList), 
-    [spreadsheet(S), not(done_detect_tables(S)), evaluate(synth_detect_tables(S,TableList))], 
+    detect_tables(S, TableList, TLLength), 
+    [spreadsheet(S), not(table_list(S, _, _)), evaluate(synth_detect_tables(S, TableList, TLLength))], 
     [],
-    [done_detect_tables(S)| TableList]
+    [table_list(S, TableList, TLLength)]
 ).
 
+
 action(
-    get_field_types(T, FieldTypeList),
-    [ table(S,T), not(done_get_field_types(T)), evaluate(synth_get_field_types(T, FieldTypeList)) ],
+    get_table(S, TableId), 
+    [table_list(S, TableList, TLLength), evaluate(synth_member(table(TableId, NRows, NCols), TableList, TLLength))], 
+    [],
+    [table(TableId, NRows, NCols)]
+).
+
+
+action(
+    get_all_field_types(TableId, FieldTypeList, FTLLength),
+    [ table(_S, TableId), not(field_type_list(TableId, _, _)), evaluate(synth_get_field_types(TableId, FieldTypeList, FTLLength)) ],
     [ ],
-    [ done_get_field_types(T) | FieldTypeList ] % This might get confusing since FT is a compound field_type(X,Y,Z)
+    [ field_type_list(TableId, FieldTypeList, FTLLength) ] % This might get confusing since FT is a compound field_type(X,Y,Z)
 ).
 
 action(
-    detect_tensors(Tbl, Tsr),
-    [table(S,Tbl), evaluate(synth_detect_tensors(Tbl, Tsr))],
+    get_all_field_headers(TableId, FieldHeaderList, FHLLength),
+    [table(_S, TableId), not(field_header_list(TableId, _, _, _)), synth_get_field_headers(TableId, NHeaderRows, FieldHeaderList, FHLLength)],
     [],
-    [ tensor(Tbl, Tsr) ]    
+    [field_header_list(TableId, NHeaderRows, FieldHeaderList, FHLLength)] 
 ).
+
+action(
+    detect_tensors(TableId, Tsr),
+    [table(_S, TableId), field_header_list(TableId, FieldHeaderList, _), evaluate(synth_detect_tensors(TableId, FieldHeaderList, Tsr)), not(table_tensor(TableId, Tsr))],
+    [],
+    [ table_tensor(TableId, Tsr) ] % TODO: Find better way to prevent ourselves adding the same tensor over and again
+).
+
