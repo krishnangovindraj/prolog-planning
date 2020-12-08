@@ -7,8 +7,8 @@
 load_problem(ProblemFile):-
     problem:do_consult_problem(ProblemFile).
 
-% action(ActionSig, PreCond, DeleteList, AddList, PerformList):-
-%     problem:action(ActionSig, PreCond, DeleteList, AddList, PerformList).
+action(ActionSig, PreCond, DeleteList, AddList, PerformList):-
+    problem:action(ActionSig, PreCond, DeleteList, AddList, PerformList).
 
 action(ActionSig, PreCond, DeleteList, AddList, []):-
     problem:action(ActionSig, PreCond, DeleteList, AddList).
