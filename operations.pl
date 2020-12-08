@@ -25,7 +25,8 @@ initialize_problem(ProblemFile):-
 
 % expand(+ActionPath, +State, -Children)
 expand(_ActionPath, State, Children):-
-    findall(ActionSig, is_applicable_action(ActionSig, State), Children).
+    % TIL: The difference between findall and bagof
+    (bagof(ActionSig, is_applicable_action(ActionSig, State), Children) -> true; Children=[]).
 
 
 % Produces every applicable action signature. Will be ground if State is ground.
