@@ -5,7 +5,7 @@
 
 
 :- use_module(representation).
-:- use_module(state_manipulation, [state_satisfies/2]).
+:- use_module(state_manipulation, [state_satisfies/2, state_apply_action/3]).
 
 :- dynamic initialize_problem__done/1.
 
@@ -53,16 +53,29 @@ simulate_predicate(_Predicate, _State):-
     writeln("Simulate doesnt' exist yet :("), fail.
 
 % +,-: non-det
-evaluate_plan_sketch(PlanSketch, State):-
-    evaluate_plan_sketch_do(PlanSketch, State).
+evaluate_plan_sketch_with_final_state(PlanSketch, FinalState):-
+    epswfs_do(PlanSketch, FinalState).
 
-evaluate_plan_sketch_do([],_):-
-    !. % Not needed really
+epswfs_do([],_):-
+    !. % The cut is not needed really
 
-evaluate_plan_sketch_do([ActionSignature|RestOfActions], State):-
-    evaluate_plan_sketch_do(RestOfActions, State),
+epswfs_do([ActionSignature|RestOfActions], FinalState):-
+    epswfs_do(RestOfActions, FinalState),
     action(ActionSignature, _PreCond, _DeleteList, _AddList, PerformList),
-    perform_performlist(PerformList, State). % This will ground ActionSignature (or fail).
+    perform_performlist(PerformList, FinalState). % This will ground ActionSignature (or fail).
+
+evaluate_plan_sketch(PlanSketch, StartState, FinalState):-
+    eps_do(PlanSketch, StartState, FinalState).
+
+
+eps_do([], State, State):-
+    !. % The cut is not needed really
+
+eps_do([ActionSignature|RestOfActions], StartState, ResultState ):-
+    eps_do(RestOfActions, StartState, IntermediateState),
+    action(ActionSignature, _PreCond, _DeleteList, _AddList, PerformList),
+    perform_performlist(PerformList, IntermediateState),  % This will ground ActionSignature (or fail).
+    state_apply_action(IntermediateState, ActionSignature, ResultState).
 
 
 perform_performlist([], _).
