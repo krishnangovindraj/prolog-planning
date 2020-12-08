@@ -71,6 +71,12 @@ class Table(Storable):
         else:
             return [r for i,r in enumerate(self.records) if i not in self.header_rows ]
 
+    def n_rows(self):
+        return len(self.records)
+    
+    def n_cols(self):
+        return max([len(r) for r in self.records])
+
     @staticmethod
     def get_next_id():
         Table.TBL_ID_AI += 1            # Not thread-safe

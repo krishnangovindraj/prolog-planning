@@ -1,5 +1,6 @@
 :- module(synth_evaluate, []).
 :- use_module('../json_client.pl').
+:- use_module(state_manipulation).
 
 :- use_module(synth_wrangling).
 
@@ -10,12 +11,20 @@
 % TODO: Result caching layer to not make the same call over and over.
 % TODO: Better argument names
 
-% Utils:
-% Why not just use member? Flexibility. This is an easy way to have variable lists of fixed-length.
+% Utils: Maybe I should move this to planning_utils?
+% Checks if there are 2 term which match exactly with Member. (i.e., one other than member itself) 
 % -, +, +
-synth_member(Member, List, ListLength):-
-    between(1, ListLength, MI),
-    nth1(MI, List, Member).
+no_duplicate_in_state(Member, State):-
+     % this:member/2 as  ==:=.
+    copy_term(Member, MemberTemplate),
+    findall( M, (
+            M = MemberTemplate,
+            check_predicate_in_state(M, State), % unifies
+            M == Member % Checks if unification was required to make them equal.
+        ), MList),
+    length(MList, MLL),
+    MLL < 2.
+
 
 %   %   %   %   %
 %   Remote calls 

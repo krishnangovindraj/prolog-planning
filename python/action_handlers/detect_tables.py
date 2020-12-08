@@ -18,7 +18,7 @@ class DetectTablesTask(ActionHandler):
 
     def tableset_to_JSONList(self, ss_id, table_set):
         # Warning. Tables must already be stored.
-        return JSONList([ JSONCompound('table', [ ss_id, t.get_id()]) for t in table_set ])
+        return JSONList([ JSONCompound('table', [ ss_id, t.get_id(), t.n_rows(), t.n_cols()]) for t in table_set ])
 
 
     def handle(self):
