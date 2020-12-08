@@ -50,7 +50,7 @@ apply_pending_actions([], PositiveState, NegativeState, UpdatedPositiveState, Up
     ord_subtract(OrdNeg, OrdInt, UpdatedNegativeState).
 
 apply_pending_actions([Action|PendingActions], PositiveState, NegativeState, UpdatedPositiveState, UpdatedNegativeState):-
-    action(Action, _Precond, DeleteList, AddList),
+    action(Action, _Precond, DeleteList, AddList, _),
     append(AddList, PositiveState, TempPositiveState),
     append(DeleteList, NegativeState, TempNegativeState),
     apply_pending_actions(PendingActions, TempPositiveState, TempNegativeState, UpdatedPositiveState, UpdatedNegativeState).

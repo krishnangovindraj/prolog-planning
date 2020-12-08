@@ -1,15 +1,21 @@
 :- module(interactive, [interactive_init/1,
-    query_current_action_path/1, query_current_state/1, apply_action_path/1, 
+    get_current_action_path/1, query_current_state/1, apply_action_path/1, 
     perform_search/3, perform_search_all_goals/3]).
 % Some interaction would be nice when you don't know the result of actions.
-:-use_module(representation).
+:-use_module(operations).
 :-use_module(state_manipulation).
 :-use_module(planning_utils, [state_query_goal_check/3]).
 :-use_module(forward_dfs).
 
 :- dynamic interactive_stack_element/3. % P, StackPrev, State 
 
-interactive_init(InitialStatePredicateList):-
+
+is_load(X):-
+    nb_getval(is_stored_val, X).
+is_store(X):-
+    nb_setval(is_stored_val, X).
+
+interactive_init(_InitialStatePredicateList):-
     nb_current(v_interactive_stack_top, _),!,
     writeln("ERROR: Interactive session active"),
     fail.
@@ -20,8 +26,13 @@ interactive_init(InitialStatePredicateList):-
     interactive_stack_push(interactive_state([],S)).
 
 % det: + , but might fail lol.
-query_current_action_path(ActionPath):-
+get_current_action_path(ActionPath):-
     interactive_stack_peek(interactive_state(ActionPath, _)).
+
+
+get_current_state(State):-
+    interactive_stack_peek(interactive_state(_, State)).
+
 
 query_current_state(StateQuery):-
     is_list(StateQuery),!,

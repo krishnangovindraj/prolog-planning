@@ -51,7 +51,7 @@ query_asserted_state_from_id(Preconditions, StateId):-
 % Applies action on state 
 % state_apply_action(+State, +Action, -ResultState)
 state_apply_action(assert_state_d(StateId, Meta), Action, assert_state_d(ResultStateId, ResultMeta)):-
-    action(Action, _Precond, DeleteList, AddList),
+    action(Action, _Precond, DeleteList, AddList, _PerformList),
     counter_get_next(ResultStateId),
     foreach(
         asserted_state_d(StateId, S), 

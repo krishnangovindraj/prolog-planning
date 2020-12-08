@@ -34,7 +34,7 @@ check_predicate_in_state(Predicate, ordered_state(State, _)):-
 % Applies action on state 
 % state_apply_action(+State, +Action, -ResultState)
 state_apply_action(ordered_state(State, Meta), Action, ordered_state(ResultState, ResultMeta)):-
-    action(Action, _Precond, DeleteList, AddList),
+    action(Action, _Precond, DeleteList, AddList, _PerformList),
     list_to_ord_set(DeleteList, Delete),
     list_to_ord_set(AddList, Add),
     ord_subtract(State, Delete, TempState),

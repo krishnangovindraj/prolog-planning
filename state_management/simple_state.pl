@@ -29,7 +29,7 @@ check_predicate_in_state(Predicate, State):-
 % Applies action on state 
 % state_apply_action(+State, +Action, -ResultState)
 state_apply_action(State, Action, ResultState):-
-    action(Action, _Precond, Delete, Add),
+    action(Action, _Precond, Delete, Add, _PerformList),
     subtract(State, Delete, TempState),
     append(Add, TempState, ResultState).
 
