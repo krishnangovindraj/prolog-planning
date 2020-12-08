@@ -2,7 +2,7 @@
 :- module(forward_dfs, [search_forward_dfs/4]).
 :- use_module(state_manipulation).
 
-:- use_module(representation).
+:- use_module(operations).
 
 % search_forward_dfs(+StartState, +InterestPredicate, +MaxDepth, -Goals):-
 search_forward_dfs(StartState, InterestPredicate, MaxDepth, Goals):-
@@ -19,6 +19,15 @@ explore_branch(ActionPath, State, InterestPredicate, GoalsReached, MaxDepth, Loo
     ),
     forward_dfs(ActionPath, State, InterestPredicate, DownbranchGoals, MaxDepth,  LoopDetector).
 
+forward_dfs_6_bagof_body(ActionPath, State, NextLevel, InterestPredicate, MaxDepth1, NextLoopDetector, NewGoals):-
+    member(NextAction, NextLevel),
+    state_apply_action(State, NextAction, NextState), % In case it fails
+    (
+        explore_branch([NextAction|ActionPath], NextState, InterestPredicate, NewGoals, MaxDepth1, NextLoopDetector);
+        not(state_cleanup(NextState, [NextAction|ActionPath])) % Runs regardless of explore_branch success/failure.
+    ).
+    
+
 % forward_dfs(+ActionPath, +State, +InterestPredicate, -Goals, +MaxDepth_, +LoopDetector)
 forward_dfs(_ActionPath, _State, _InterestPredicate, [], MaxDepth, _LoopDetector):-
     MaxDepth =:= 0, !. % Efficiency cut
@@ -29,17 +38,11 @@ forward_dfs(ActionPath, State, InterestPredicate, Goals, MaxDepth, LoopDetector)
     MaxDepth1 is MaxDepth - 1,
     expand(ActionPath, State, NextLevel),
     state_update_loopdetector(State, ActionPath, LoopDetector, NextLoopDetector),
-    findall(Goals, 
-        (
-            member(NextAction, NextLevel),
-            state_apply_action(State, NextAction, NextState), % In case it fails
-            (
-                explore_branch([NextAction|ActionPath], NextState, InterestPredicate, Goals, MaxDepth1, NextLoopDetector);
-                not(state_cleanup(NextState, [NextAction|ActionPath])) % Runs regardless of explore_branch success/failure.
-            )
-        ),
-        UnflatGoals
-    ),
+    (
+        bagof(NewGoals, forward_dfs_6_bagof_body(ActionPath, State, NextLevel, InterestPredicate, MaxDepth1, NextLoopDetector, NewGoals), UnflatGoals) -> 
+            true;
+            UnflatGoals = []
+    ), % The ugly -> is for bagof failing when there are no results.
     combine_lists(UnflatGoals, Goals).
 
 combine_lists([], []):- !.

@@ -18,12 +18,18 @@ This cannot be used for serious planning problems. If that's what you need, Use 
 
 
 ## YOU'LL PROBABLY HAVE A BAD TIME IF YOU DON'T READ THIS:
-* Any variable appearing in the DeleteList or the AddList ***MUST*** appear in the ActionSignature
+### On simple programs with no variables in the state ###
 * The initial state ***MUST*** be ground.
+* Any variable appearing in the Add/Delete List ***MUST*** appear in the ActionSignature
+* All variables in an evaluate must be ground post evaluation OR not appear in the Delete/AddList.
 These together should guarantee that any state will be ground by construction.
 
-If/When I (or you?) sit down to finally write a backwards planner, I will hopefully allow variables to be in the state. I don't even know if that's possible.
+If/When I (or you?) sit down to finally write a backwards planner, I will hopefully allow variables to be in the state. I don't even know if that's possible, but for now I have another approach:
 
+### On programs with perform/variables ###
+- Performs ***MUST FAIL*** if they do not meet their promises.
+- If following actions make no assumptions about the value of the variables (this includes structure, which is complicated for lists), you should be fine.
+- All variables must be ground after a perform is performed.
 
 ## Blocks Example
 `/examples/blocks_plan.pl` contains a simple planning problem in the block world (from AI:AMA), You can see how the actions are declared.
