@@ -22,8 +22,8 @@ no_duplicate_in_state(Member, State):-
             check_predicate_in_state(M, State), % unifies
             M == Member % Checks if unification was required to make them equal.
         ), MList),
-    length(MList, MLL),
-    MLL < 2.
+    % MLL == 0 .
+    MLL < 2. % < 2 if you're doing the final state version. else == 0.
 
 
 %   %   %   %   %
@@ -63,3 +63,24 @@ synth_learn_countor(tensor(TableId, AxisLabels, IndexMap), Constraints):-
 % +, - : non-det. 
 synth_contains_tensor(TableId, FieldHeaderList, tensor(TableId, AxisLabels, IndexMap)):-
     synth_detect_tensors_impl(TableId, FieldHeaderList, tensor(TableId, AxisLabels, IndexMap)).
+
+% Shady. This should ideally be a perform.
+synth_join_candidate(FHL1, FHL2, JC):-
+    (var(FHL1),!);
+    (var(FHL2),!);
+    (member(field_header(_, _, JC), FHL1), member(field_header(_, _, JC), FHL2)).
+    
+synth_inner_join(
+        T1Id, T2Id,      % +, +
+        JoinSpec,      % in or out: ?
+        State,   
+        table(SSId, T3Id, NRows, NCols) % out: -, -, -, -
+    ):-
+    % Supports +- for 
+    % % branch-point to backtrack over possibilities
+    % check_predicate_in_state(field_header_list(T1Id, _, FHL1,_), State),
+    % check_predicate_in_state(field_header_list(T2Id, _, FHL2,_), State),
+    
+    % member(JoinSpec, FHL1), member(JoinSpec, FHL2),  % This enables the ? on JoinField
+    
+    query_synth(join_tables(T1Id, T2Id, JoinSpec, SSId, T3Id, NRows, NCols)).

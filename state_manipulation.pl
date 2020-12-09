@@ -4,10 +4,10 @@
     do_loop_detection/1, hash_collision_is_loop/1,
     check_predicate_in_state/2]).
 
-% :- use_module('state_management/simple_state.pl').
+:- use_module('state_management/simple_state.pl').
 % :- use_module('state_management/ordered_state.pl').
 % :- use_module('state_management/assert_state.pl').
-:- use_module('state_management/assert_state_dfs.pl').
+% :- use_module('state_management/assert_state_dfs.pl').
 
 
 

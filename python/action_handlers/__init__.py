@@ -7,8 +7,9 @@ from .get_fields import GetFieldTypesTask
 from .get_field_headers import GetFieldHeadersTask
 from .load_spreadsheet import LoadSpreadsheetTask
 from .learn_countor import LearnCountORTask
+from .join_tables import JoinTablesTask
 
-# from .get_table_structure import GetTableStructureTask
+from .get_table_structure import GetTableStructureTask
 
 
 AVAILABLE_TASKS = {
@@ -18,7 +19,7 @@ AVAILABLE_TASKS = {
     LoadSpreadsheetTask.PREDICATE: LoadSpreadsheetTask,
     GetFieldTypesTask.PREDICATE: GetFieldTypesTask,
     GetFieldHeadersTask.PREDICATE: GetFieldHeadersTask,
-    LearnCountORTask.PREDICATE: LearnCountORTask
-    
+    LearnCountORTask.PREDICATE: LearnCountORTask,
+    JoinTablesTask.PREDICATE: JoinTablesTask
     # GetTableStructureTask.PREDICATE: GetTableStructureTask, # Replaced by GetFieldHeadersTask
 }
