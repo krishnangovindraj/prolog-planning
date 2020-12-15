@@ -9,10 +9,13 @@ from .get_incomplete_fields import GetIncompleteFieldsTask
 from .load_spreadsheet import LoadSpreadsheetTask
 
 from .tensor_from_spec import TensorFromSpecTask
+from .fold_tensor import FoldTensorTask
 from .learn_countor import LearnCountORTask
+
 from .join_tables import JoinTablesTask
 
-from .get_table_structure import GetTableStructureTask
+# DEPRECATED
+# from .get_table_structure import GetTableStructureTask
 
 
 AVAILABLE_TASKS = {
@@ -25,8 +28,10 @@ AVAILABLE_TASKS = {
     GetIncompleteFieldsTask.PREDICATE: GetIncompleteFieldsTask,
     
     TensorFromSpecTask.PREDICATE: TensorFromSpecTask,
+    FoldTensorTask.PREDICATE: FoldTensorTask,
     LearnCountORTask.PREDICATE: LearnCountORTask,
     
+
     JoinTablesTask.PREDICATE: JoinTablesTask
     # GetTableStructureTask.PREDICATE: GetTableStructureTask, # Replaced by GetFieldHeadersTask
 }

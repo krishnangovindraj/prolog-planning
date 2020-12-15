@@ -115,10 +115,12 @@ class Tensor(Storable):
     # Easy creation from earlier 
     @staticmethod
     def from_table_spec(table: 'Table', axis_labels, index_map) -> 'Table':
+        from numpy import array as np_array
+
         records = table.get_records(include_headers=False)
         keys = [r[0] for r in records]
         variables = [keys] + axis_labels 
-        data = Tensor._get_data_from_indices(records, index_map)
+        data = np_array(Tensor._get_data_from_indices(records, index_map))
         tsr = Tensor(data, variables, table)
 
         return tsr

@@ -70,12 +70,14 @@ synth_learn_countor(TensorId, Constraints):-
 %   Local calls 
 %   %   %   %   %
 % +, - : non-det. 
-synth_contains_tensor(TableId, FieldHeaderList, tensor(TableId, AxisLabels, IndexMap)):-
-    synth_detect_tensors_impl(TableId, FieldHeaderList, tensor(TableId, AxisLabels, IndexMap)).
+synth_contains_tensor(TableId, FieldHeaderList, tensor_spec(TableId, AxisLabels, IndexMap)):-
+    synth_detect_tensors_impl(TableId, FieldHeaderList, AxisLabels, IndexMap).
 
-synth_materialize_tensor(tensor(TableId, AxisLabels, IndexMap), TensorId):-
+synth_materialize_tensor(tensor_spec(TableId, AxisLabels, IndexMap), TensorId):-
     query_synth(tensor_from_spec(TableId, AxisLabels, IndexMap, TensorId)).
 
+synth_fold_tensor(TsrId, AxisI, AggOp, NewTsrId):-
+    query_synth(fold_tensor(TsrId, AxisI, AggOp, NewTsrId)).
 
 synth_inner_join(
         T1Id, T2Id,      % +, +

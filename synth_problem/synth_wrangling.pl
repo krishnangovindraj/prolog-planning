@@ -1,10 +1,10 @@
-:- module(synth_wrangling, [synth_detect_tensors_impl/3]).
+:- module(synth_wrangling, [synth_detect_tensors_impl/4]).
 
 :- use_module(state_manipulation).
 % Not actually wrangling, but I can't spend time thinking about good names.
 
-
-synth_detect_tensors_impl(TableId, FieldHeaderList, tensor(TableId, AxisLabels, IndexMap)):-
+% +, +, -, -
+synth_detect_tensors_impl(TableId, FieldHeaderList, AxisLabels, IndexMap):-
     % TODO: Fix inefficient declarative:
     findall(FT,
         member(field_header(TableId, _FI, FT), FieldHeaderList),

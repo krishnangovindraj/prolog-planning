@@ -7,7 +7,6 @@ from .get_fields import GetFieldTypesTask
 from pj_protocol import JSONActionRequest, JSONCompound, JSONList
 
 from components.countor import learner as countor_learner
-from numpy import array as np_array
 
 class LearnCountORTask(ActionHandler):
     PREDICATE = 'learn_countor'
@@ -29,7 +28,7 @@ class LearnCountORTask(ActionHandler):
         
         tsr = self.idb.get_tensor(req.tensor_id)
         
-        cor_constraints, reordered_vars = countor_learner.learnConstraints(np_array(tsr.data), tsr.variables)
+        cor_constraints, reordered_vars = countor_learner.learnConstraints(tsr.data, tsr.variables)
 
         constraint = Constraint('countor', cor_constraints)
 
