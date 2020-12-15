@@ -40,6 +40,17 @@ action(
     [perform(synth_get_field_types(TableId, FieldTypeList, FTLLength))]
 ).
 
+
+action(
+    get_incomplete_fields(TableId, NHeaderRows, IncompleteFieldList, IFLLength),
+    [ table(_S, TableId, _NRows, _NCols), not([incomplete_field_list(TableId, _, _)]),
+        field_header_list(TableId, NHeaderRows, _, _) ],
+    [ ],
+    [ incomplete_field_list(TableId, IncompleteFieldList, IFLLength) ],
+    [perform(synth_get_incomplete_fields(TableId, NHeaderRows, IncompleteFieldList, IFLLength))]
+).
+
+
 action(
     get_all_field_headers(TableId, FieldHeaderList, FHLLength),
     [table(_S, TableId, _NRows, _NCols), not([field_header_list(TableId, _, _, _)])],

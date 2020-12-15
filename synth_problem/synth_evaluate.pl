@@ -24,7 +24,7 @@ no_duplicate_in_state(Member, State):-
         ), MList),
     % MLL == 0 .
     MLL < 2. % < 2 if you're doing the final state version. else == 0.
-
+    
 
 %   %   %   %   %
 %   Remote calls 
@@ -38,11 +38,18 @@ synth_detect_tables(SpreadsheetId, TableList, TLLength):-
     query_synth(detect_tables(SpreadsheetId, TableList)),
     length(TableList, TLLength).
 
-% +, - % det for now. No alternatives to the field_types.
+% +, -, - % det for now. No alternatives to the field_types.
 synth_get_field_types(TableId, FieldTypes, FieldTypeLength):-
     query_synth(get_field_types(TableId, FieldTypes)),
     length(FieldTypes, FieldTypeLength).
 
+synth_get_incomplete_fields(TableId, NHeaderRows, IncompleteFieldList, IFLength):-
+    query_synth(get_incomplete_fields(TableId, NHeaderRows, IncompleteFields)),
+    findall(F/P , member(incomplete_field(F, P), IncompleteFields), IncompleteFieldList),
+    length(IncompleteFieldList, IFLength).
+
+
+% +, -, -, -
 synth_get_field_headers(TableId, NHeaderRows, FieldHeaderList, FHLLength):-
     query_synth(get_field_headers(TableId, NHeaderRows, FieldHeaderList)),
     length(FieldHeaderList, FHLLength).
@@ -64,12 +71,6 @@ synth_learn_countor(tensor(TableId, AxisLabels, IndexMap), Constraints):-
 synth_contains_tensor(TableId, FieldHeaderList, tensor(TableId, AxisLabels, IndexMap)):-
     synth_detect_tensors_impl(TableId, FieldHeaderList, tensor(TableId, AxisLabels, IndexMap)).
 
-% Shady. This should ideally be a perform.
-synth_join_candidate(FHL1, FHL2, JC):-
-    (var(FHL1),!);
-    (var(FHL2),!);
-    (member(field_header(_, _, JC), FHL1), member(field_header(_, _, JC), FHL2)).
-    
 synth_inner_join(
         T1Id, T2Id,      % +, +
         JoinSpec,      % in or out: ?
@@ -84,3 +85,11 @@ synth_inner_join(
     % member(JoinSpec, FHL1), member(JoinSpec, FHL2),  % This enables the ? on JoinField
     
     query_synth(join_tables(T1Id, T2Id, JoinSpec, SSId, T3Id, NRows, NCols)).
+
+
+
+% Shady. This should ideally be a perform.
+synth_join_candidate(FHL1, FHL2, JC):-
+    (var(FHL1),!);
+    (var(FHL2),!);
+    (member(field_header(_, _, JC), FHL1), member(field_header(_, _, JC), FHL2)).
