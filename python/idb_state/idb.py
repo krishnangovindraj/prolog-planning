@@ -1,4 +1,4 @@
-from .state import SpreadSheet, Table
+from .state import SpreadSheet, Table, Tensor,  Constraint
 
 # Directory for all versions of all tables and all models
 class IDB:
@@ -6,7 +6,11 @@ class IDB:
         self._n_tables = 0
         self._n_models = 0
         self.spreadsheets = {}
+        
         self.tables = {}
+        self.tensors = {}
+
+        self.constraints = {}
         self.models = {}
 
     def next_table_id(self) -> int:
@@ -32,3 +36,18 @@ class IDB:
 
     def get_table(self, tbl_id):
         return self.tables[tbl_id]
+
+    def add_tensor(self, tsr: Tensor):
+        self.tensors[tsr._id] = tsr
+        tsr._in_db = True
+
+    def get_tensor(self, tsr_id):
+        return self.tensors[tsr_id]
+
+    def add_constraint(self, cstr: Constraint):
+        self.constraints[cstr._id] = cstr
+        cstr._in_db = True
+
+    def get_constraint(self, cstr_id):
+        return self.constraints[cstr_id]
+

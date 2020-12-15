@@ -2,6 +2,7 @@
 :- use_module('../json_client.pl').
 :- use_module(state_manipulation).
 
+:- consult('synth_sql.pl').
 :- use_module(synth_wrangling).
 
 % multi- A set of outputs (one-by-one)
@@ -23,6 +24,7 @@ no_duplicate_in_state(Member, State):-
             M == Member % Checks if unification was required to make them equal.
         ), MList),
     % MLL == 0 .
+    length(MList, MLL),
     MLL < 2. % < 2 if you're doing the final state version. else == 0.
     
 
@@ -59,8 +61,8 @@ synth_get_field_headers(TableId, NHeaderRows, FieldHeaderList, FHLLength):-
 %     query_synth(get_table_structure(TableId, TableStructurePreds)).
 
 % +, - % Is det if countor learning is det :|
-synth_learn_countor(tensor(TableId, AxisLabels, IndexMap), Constraints):-
-    query_synth( learn_countor(TableId, AxisLabels, IndexMap, Constraints) ).
+synth_learn_countor(TensorId, Constraints):-
+    query_synth( learn_countor(TensorId, Constraints) ).
 
 
 
@@ -70,6 +72,10 @@ synth_learn_countor(tensor(TableId, AxisLabels, IndexMap), Constraints):-
 % +, - : non-det. 
 synth_contains_tensor(TableId, FieldHeaderList, tensor(TableId, AxisLabels, IndexMap)):-
     synth_detect_tensors_impl(TableId, FieldHeaderList, tensor(TableId, AxisLabels, IndexMap)).
+
+synth_materialize_tensor(tensor(TableId, AxisLabels, IndexMap), TensorId):-
+    query_synth(tensor_from_spec(TableId, AxisLabels, IndexMap, TensorId)).
+
 
 synth_inner_join(
         T1Id, T2Id,      % +, +
@@ -93,3 +99,10 @@ synth_join_candidate(FHL1, FHL2, JC):-
     (var(FHL1),!);
     (var(FHL2),!);
     (member(field_header(_, _, JC), FHL1), member(field_header(_, _, JC), FHL2)).
+
+synth_projection_field_mapping(SrcHeaderList, _DstHeaderList, DstIncompleteList, FieldMapping, RemainingIncompleteFields):-
+    findall(JC, synth_join_candidate( DstIncompleteList, SrcHeaderList, JC), AllJC),
+    % TODO: Generate subsets.    
+    % This looks wasteful because I haven't decided the format of DstIncompleteList yet, soz.
+    findall(M/M , member(M, AllJC), FieldMapping),
+    findall(M , (member(M, DstIncompleteList), not(member(M, AllJC))), RemainingIncompleteFields).

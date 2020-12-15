@@ -96,6 +96,68 @@ class Table(Storable):
             self.col_range[0], self.col_range[0] + self.col_range[1],
         )
 
+class Tensor(Storable):
+    
+    TSR_ID_AI = 0
+    @staticmethod
+    def get_next_id():
+        Tensor.TSR_ID_AI += 1            # Not thread-safe
+        return 'tsr_' + str(Tensor.TSR_ID_AI)
+
+    def __init__(self, data, variables:List[List[str]], origin_table: Table):
+        super(Tensor, self).__init__(Tensor.get_next_id())
+        self.data  = data
+        self.variables = variables
+        self.shape = [len(vl) for vl in variables]
+        self.origin_table = origin_table
+        self.data_type = "todo"
+
+    # Easy creation from earlier 
+    @staticmethod
+    def from_table_spec(table: 'Table', axis_labels, index_map) -> 'Table':
+        records = table.get_records(include_headers=False)
+        keys = [r[0] for r in records]
+        variables = [keys] + axis_labels 
+        data = Tensor._get_data_from_indices(records, index_map)
+        tsr = Tensor(data, variables, table)
+
+        return tsr
+    
+    @staticmethod
+    def _get_data_from_indices(records, index_map):
+        l1 = len(index_map)
+        l2 = len(index_map[0])
+
+        tensor = []
+        for r in records:
+            level = []
+            for l in index_map:
+                strip = []
+                for idx in l:
+                    strip.append( int(r[idx]) )
+                level.append(strip)
+            tensor.append(level)
+        return tensor
+
+    
+    def __str__(self):
+        return "Tensor(%s,%s)]"%(
+            self.data_type, self.shape
+        )
+
+class Constraint(Storable):
+    CSTR_ID_AI = 0
+    @staticmethod
+    def get_next_id():
+        Constraint.CSTR_ID_AI += 1            # Not thread-safe
+        return 'cstr_' + str(Constraint.CSTR_ID_AI)
+
+    def __init__(self, cstr_type: str, cstr):
+        super(Constraint, self).__init__(Constraint.get_next_id())
+        self.cstr_type = cstr_type
+        self.cstr  = cstr
+    
+
 class Record:
     def __init__(self, values: List, is_header: bool):
         self.values = values
