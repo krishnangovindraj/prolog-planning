@@ -1,5 +1,5 @@
-:- module(interactive, [interactive_init/1,
-    get_current_action_path/1, query_current_state/1, apply_action_path/1, 
+:- module(interactive, [interactive_init/1, one_iter/0,
+    get_current_action_path/1, query_current_state/1, apply_action_path/1, apply_action_path/2,
     perform_search/3, perform_search_all_goals/3]).
 % Some interaction would be nice when you don't know the result of actions.
 :-use_module(operations).
@@ -9,11 +9,22 @@
 
 :- dynamic interactive_stack_element/3. % P, StackPrev, State 
 
+one_iter:-
+    interactive:get_current_state(S),
+    interactive:get_applicable_action(AL),
+    member(A,AL),
+    is_yn_prompt("Sketch action:\n\t ~k", [A]),
+    operations:evaluate_plan_sketch([A],S, _F), is_yn_prompt("Apply Action:\n\t ~k", [A]),
+    interactive:apply_action_path([A]).
 
 is_load(X):-
     nb_getval(is_stored_val, X).
 is_store(X):-
     nb_setval(is_stored_val, X).
+
+is_yn_prompt(FormatStr, FormatArgs):-
+    format(FormatStr, FormatArgs), nl,
+    get_single_char(121). % y
 
 interactive_init(_InitialStatePredicateList):-
     nb_current(v_interactive_stack_top, _),!,
@@ -58,6 +69,9 @@ get_applicable_action(Action):-
     expand(CurrentActionPath, CurrentState, Action).
 
 apply_action_path(ActionPath):-
+    apply_action_path(ActionPath, _).
+
+apply_action_path(ActionPath, ResultState):-
     ground(ActionPath),
     apply_action_path_do(ActionPath, ResultState),
     interactive_stack_push(ResultState). % Just to be sure.

@@ -64,6 +64,7 @@ epswfs_do([ActionSignature|RestOfActions], FinalState):-
     action(ActionSignature, _PreCond, _DeleteList, _AddList, PerformList),
     perform_performlist(PerformList, FinalState). % This will ground ActionSignature (or fail).
 
+% +,+,-: non-det
 evaluate_plan_sketch(PlanSketch, StartState, FinalState):-
     eps_do(PlanSketch, StartState, FinalState).
 
