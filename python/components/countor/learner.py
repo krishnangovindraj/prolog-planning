@@ -5,8 +5,12 @@ Created on Wed Mar 20 17:02:20 2019
 
 @author: mohit
 """
-# import helper
-from . import helper
+try:
+    from . import helper
+except ImportError:
+    import helper
+
+from . import helper # Don't know why this doesn't work.
 import numpy as np
 from openpyxl import load_workbook
 import itertools as it
@@ -105,11 +109,11 @@ def run_on_nurse_csv():
     axis_labels =  [['D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6'], ['S0', 'S1', 'S2']]
     index_map = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12], [13, 14, 15], [16, 17, 18], [19, 20, 21]]
     
-    records = raw[2:]
+    records = raw[2:14]
     variables = [[r[0] for r in records]] + axis_labels 
     
     data = np_array(_get_data_from_indices(records, index_map))
-    # print(data.shape)
+    print(data.shape)
     cor_constraints = learnConstraints(data, variables)
     return data, cor_constraints, variables
 
@@ -120,4 +124,5 @@ def run_on_nurse_csv():
 
 
 if __name__ == "__main__":
+    # If you can't import helper, see the comment
     print(run_on_nurse_csv())

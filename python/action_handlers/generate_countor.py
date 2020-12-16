@@ -1,4 +1,3 @@
-from itertools import chain as iter_chain
 from idb_state.state import Tensor, Constraint
 
 from .action_handler import ActionHandler
@@ -33,7 +32,7 @@ class GenerateCountORTask(ActionHandler):
         partial_data = np_empty( axis_lengths ); partial_data[:] = np_nan # TODO
         solutions_list = countor_sampler.generate_sample(constraint.constraint_object, axis_lengths, 1, partial_data)
         new_data = solutions_list[0]
-        print("SHAPES: ", base_tsr.data.shape, new_data.shape)
+        # print("SHAPES: ", base_tsr.data.shape, new_data.shape)
         
         new_tsr = Tensor(new_data, base_tsr.variables, None)
         self.idb.add_tensor(new_tsr)

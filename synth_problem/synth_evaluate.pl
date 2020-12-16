@@ -55,6 +55,9 @@ synth_learn_countor(TensorId, Constraints):-
 synth_generate_countor(Constraints, NewTensorId):-
     query_synth( generate_countor(Constraints, NewTensorId) ).
 
+synth_fill_countor(Constraints, FillTensorId, NewTensorId):-
+    query_synth( fill_countor(Constraints, FillTensorId, NewTensorId) ).
+
 
 %   %   %   %   %
 %   Local calls 
