@@ -1,0 +1,1 @@
+:- consult('domain/domain_meta.pl').
