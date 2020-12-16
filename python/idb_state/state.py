@@ -15,6 +15,9 @@ class Storable:
     def get_id(self):
         return self._id if self._in_db else None
 
+    def dump(self):
+        return self.__str__()
+
 class CellRange:
     def __init__(self, filename, row_start, col_start, n_rows, n_cols): # sheet_name, 
         self.filename = filename
@@ -37,6 +40,9 @@ class SpreadSheet(Storable):
         # self.tables = None # List[str]    # Str are table_ids
         self.id = None # No ID till it's saved
 
+    def __str__(self):
+        return "spreadsheet(%s)"%self.get_id()
+    
     @staticmethod
     def get_next_id(filename):
         SpreadSheet.SS_ID_AI += 1            # Not thread-safe
@@ -90,11 +96,17 @@ class Table(Storable):
         new_table.fields = [f.clone() for f in src.fields] # New list -> can add/remove fields.  deep copy ONLY because of missing :(. Again, lazy copies would be cool
         return new_table
     
+    def dump(self):
+        return "--- dumping  table: %s---\n%s\n--- end dumping table ---"%(
+                self.__str__(), '\n'.join(self.get_records(True))
+            )
+
     def __str__(self):
-        return "Table[(%d,%d),(%d,%d)]"%(
-            self.row_range[0], self.row_range[0] + self.row_range[1],
-            self.col_range[0], self.col_range[0] + self.col_range[1],
-        )
+        return "table(%s, %d, %d)"%(self.get_id(), self.n_rows(), self.n_cols())
+        # return "Table[(%d,%d),(%d,%d)]"%(
+        #     self.row_range[0], self.row_range[0] + self.row_range[1],
+        #     self.col_range[0], self.col_range[0] + self.col_range[1],
+        # )
 
 class Tensor(Storable):
     
@@ -127,6 +139,7 @@ class Tensor(Storable):
     
     @staticmethod
     def _get_data_from_indices(records, index_map):
+        from numpy import nan as np_nan
         l1 = len(index_map)
         l2 = len(index_map[0])
 
@@ -136,7 +149,10 @@ class Tensor(Storable):
             for l in index_map:
                 strip = []
                 for idx in l:
-                    strip.append( int(r[idx]) )
+                    if r[idx].strip():
+                        strip.append( int(r[idx]) )
+                    else:
+                        strip.append( np_nan )
                 level.append(strip)
             tensor.append(level)
         return tensor
@@ -150,6 +166,12 @@ class Tensor(Storable):
             return Tensor.pad_to_size_3(next_data, next_variables)
         else:
             return data, vars
+
+    
+    def dump(self):
+        return "--- dumping tensor: %s---\n%s\n--- end dumping tensor ---"%(
+                self.__str__(), self.data
+            )
 
     def __str__(self):
         return "Tensor(%s,%s)]"%(

@@ -1,6 +1,7 @@
 from .action_handler import ActionHandler
 
 from .test_protocol import TestProtocolTask
+from .dump_storable import DumpStorableTask
 
 from .detect_tables import DetectTablesTask
 from .get_fields import GetFieldTypesTask
@@ -13,6 +14,7 @@ from .fold_tensor import FoldTensorTask
 from .learn_countor import LearnCountORTask
 from .generate_countor import GenerateCountORTask
 
+
 from .join_tables import JoinTablesTask
 
 # DEPRECATED
@@ -21,6 +23,7 @@ from .join_tables import JoinTablesTask
 
 AVAILABLE_TASKS = {
     TestProtocolTask.PREDICATE: TestProtocolTask,
+    DumpStorableTask.PREDICATE: DumpStorableTask,
 
     DetectTablesTask.PREDICATE: DetectTablesTask,
     LoadSpreadsheetTask.PREDICATE: LoadSpreadsheetTask,
@@ -32,7 +35,7 @@ AVAILABLE_TASKS = {
     FoldTensorTask.PREDICATE: FoldTensorTask,
     LearnCountORTask.PREDICATE: LearnCountORTask,
     GenerateCountORTask.PREDICATE: GenerateCountORTask,
-
+    
     JoinTablesTask.PREDICATE: JoinTablesTask
     # GetTableStructureTask.PREDICATE: GetTableStructureTask, # Replaced by GetFieldHeadersTask
 }

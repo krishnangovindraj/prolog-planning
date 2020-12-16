@@ -15,6 +15,10 @@
 %   %   %   %   %
 %   Remote calls 
 %   %   %   %   %
+
+synth_dump_storable(StorableType, StorableId):-
+    query_synth(dump_storable(StorableType, StorableId)).
+
 % det: +, -
 synth_load_spreadsheet(Filename, SpreadsheetId):-
     query_synth(load_spreadsheet(Filename, SpreadsheetId)).
