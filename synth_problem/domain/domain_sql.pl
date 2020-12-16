@@ -17,9 +17,9 @@ action(
         field_header_list(T1Id, _NHR1, FHL1, _), field_header_list(T2Id, _NHR2, FHL2, _ ), % Require same NHR?
         evaluate( synth_join_candidate(FHL1, FHL2, JoinField) ) ], % Will succeed with variable if FHL1 or FHL2 is variable
     [],
-    [table(joined(T1Id, T2Id), T3Id, T3Rows, T3Cols), field_header_list(T3Id, T3HeaderRows, FHL3, FHLL3), field_type_list()],
+    [table(joined(T1Id, T2Id), T3Id, T3Rows, T3Cols)], % TODO , field_header_list(T3Id, T3HeaderRows, FHL3, FHLL3), field_type_list()],
     [
-        perform(synth_inner_join(T1Id, T2Id, JoinField, State, table(S3, T3Id, T3Rows, T3Cols)))
+        perform(synth_inner_join(T1Id, T2Id, JoinField, State, table(join(T1Id, T2Id), T3Id, T3Rows, T3Cols)), State)
     ]
 ).
 

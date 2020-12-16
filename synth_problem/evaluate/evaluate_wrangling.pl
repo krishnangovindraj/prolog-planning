@@ -1,4 +1,4 @@
-:- module(synth_wrangling, [synth_detect_tensors_impl/4]).
+:- module(evaluate_wrangling, [synth_detect_tensors_impl/4]).
 
 :- use_module(state_manipulation).
 % Not actually wrangling, but I can't spend time thinking about good names.

@@ -1,4 +1,4 @@
-:- module(synth_utils, [no_duplicate_in_state/2]).
+% :- module(evaluate_utils, [no_duplicate_in_state/2]).
 
 :- use_module(state_manipulation, [check_predicate_in_state/2]).
 
