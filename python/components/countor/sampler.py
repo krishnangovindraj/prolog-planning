@@ -12,9 +12,7 @@ import sys, os
 
 
 def generatesSample(
-    num_days,
-    num_shifts,
-    num_nurses,
+    axis_lengths, # num_days,# num_shifts, # num_nurses,
     numSam,
     bounds,
     constrList,
@@ -24,14 +22,21 @@ def generatesSample(
     gid,
 ):
 
-    N = list(range(num_nurses))
-    D = list(range(num_days))
-    Ds = list(range(num_days + 1))
-    S = list(range(num_shifts))
-    Ss = list(range(num_shifts + 1))
-    #    Sk=list(range(2))
 
+    N = list(range(axis_lengths[0])) #num_nurses))
+    D = list(range(axis_lengths[1]))  #num_days))
+    Ds = list(range(axis_lengths[1] + 1)) #num_days + 1))
+    S = list(range(axis_lengths[2])) # num_shifts))
+    Ss = list(range(axis_lengths[2] + 1)) # num_shifts + 1))
+    
+    # N = list(range(num_nurses))
+    # D = list(range(num_days))
+    # Ds = list(range(num_days + 1))
+    # S = list(range(num_shifts))
+    # Ss = list(range(num_shifts + 1))
+    # #    Sk=list(range(2))
     #    constrList=[[(0,),(1,)],[(0,),(2,)],[(0,),(1,2)],[(1,),(0,)],[(1,),(2,)],[(1,),(0,2)],[(2,),(0,)],[(2,),(1,)],[(2,),(0,1)],[(0,1),(2,)],[(0,2),(1,)],[(1,2),(0,)]]
+
 
     try:
         sys.stdout = open(os.devnull, "w")
@@ -1075,40 +1080,48 @@ def generatesSample(
         #     m.write("m.sol")
         #        print(nSolutions)
         #        print(partial_sol)
-        multi_predictions = []
+        solutions_list = []
         for i in range(nSolutions):
-            provenance = ("countor", gid + "-" + str(uuid4()))
+            #  provenance = ("countor", gid + "-" + str(uuid4()))
             m.setParam(GRB.Param.SolutionNumber, i)
             solution = m.getAttr("xn", o)
             #             print(m.getAttr("xn", p))
-            tmp = np.zeros([num_nurses, num_days, num_shifts])
+            tmp = np.zeros(axis_lengths) # [num_nurses, num_days, num_shifts]
             for key in solution:
                 tmp[key] = round(solution[key])
             #            tSample=np.swapaxes(np.swapaxes(tmp,0,1),1,2)
             tmp_sol = tmp.astype(int)
 
             #            print(partial_sol)
-            for n in N:
-                for d in D:
-                    for s in S:
-                        #                        print(x_mapping[n,d,s],y_mapping[n,d,s])
-                        if np.isnan(partial_sol[n, d, s]):
-                            #                            print("geer")
-                            multi_predictions.append(
-                                Prediction(
-                                    Coordinate(
-                                        y_mapping[n, d, s].item(),
-                                        x_mapping[n, d, s].item(),
-                                    ),
-                                    tmp_sol[n, d, s].item(),
-                                    1,
-                                    provenance,
-                                )
-                            )
-        return multi_predictions
+            solutions_list.append(tmp_sol)
+            
+
+        return solutions_list
 
     except GurobiError as e:
         print("Error code " + str(e.errno) + ": " + str(e))
 
     except AttributeError:
         print("Encountered an attribute error")
+
+
+def example_main():
+    from learner import run_on_nurse_csv
+    _data, constraints, var_labels = run_on_nurse_csv()
+    # print([len(v) for v in var_labels])
+    # print(data.shape)
+    axis_lengths = tuple(len(v) for v in var_labels)
+    
+    partial_sol = np.empty( axis_lengths )
+    partial_sol[:] = np.nan
+    
+    constraint_vals = [v for v in constraints.values()]
+    constr_keys = [k for k in constraints.keys()]
+
+    bounds = np.asarray([list(cval.values()) for cval in constraint_vals])
+    return generatesSample( #7, 3, 12, 
+        axis_lengths,
+        1, bounds, constr_keys, partial_sol, None, None, 'foo')
+    
+if __name__ == "__main__":
+    print(example_main())
