@@ -2,7 +2,6 @@ from itertools import chain as iter_chain
 from idb_state.state import Tensor, Constraint
 
 from .action_handler import ActionHandler
-from .get_fields import GetFieldTypesTask
 
 from pj_protocol import JSONActionRequest, JSONCompound, JSONList
 
@@ -26,11 +25,12 @@ class LearnCountORTask(ActionHandler):
         req = LearnCountORTask.LearnCountORPredicate(*self.action_request.action_compound.args)
         # First, get the data
         
-        tsr = self.idb.get_tensor(req.tensor_id)
-        
-        cor_constraints, reordered_vars = countor_learner.learnConstraints(tsr.data, tsr.variables)
+        tsr = self.idb.get_tensor(req.tensor_id)    
+        tsr_data, tsr_variables = Tensor.pad_to_size_3(tsr.data, tsr.variables)
 
-        constraint = Constraint('countor', cor_constraints)
+        cor_constraints = countor_learner.learnConstraints(tsr_data, tsr_variables)
+
+        constraint = Constraint('countor', cor_constraints, tsr.get_id())
 
         self.idb.add_constraint(constraint)
 

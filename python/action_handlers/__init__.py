@@ -11,6 +11,7 @@ from .load_spreadsheet import LoadSpreadsheetTask
 from .tensor_from_spec import TensorFromSpecTask
 from .fold_tensor import FoldTensorTask
 from .learn_countor import LearnCountORTask
+from .generate_countor import GenerateCountORTask
 
 from .join_tables import JoinTablesTask
 
@@ -30,7 +31,7 @@ AVAILABLE_TASKS = {
     TensorFromSpecTask.PREDICATE: TensorFromSpecTask,
     FoldTensorTask.PREDICATE: FoldTensorTask,
     LearnCountORTask.PREDICATE: LearnCountORTask,
-    
+    GenerateCountORTask.PREDICATE: GenerateCountORTask,
 
     JoinTablesTask.PREDICATE: JoinTablesTask
     # GetTableStructureTask.PREDICATE: GetTableStructureTask, # Replaced by GetFieldHeadersTask

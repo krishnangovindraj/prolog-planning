@@ -17,9 +17,7 @@ def generatesSample(
     bounds,
     constrList,
     partial_sol,
-    x_mapping,
-    y_mapping,
-    gid,
+    # x_mapping, y_mapping, gid,
 ):
 
 
@@ -1104,24 +1102,32 @@ def generatesSample(
     except AttributeError:
         print("Encountered an attribute error")
 
+# Wrapper for my stuff.
 
-def example_main():
-    from learner import run_on_nurse_csv
-    _data, constraints, var_labels = run_on_nurse_csv()
-    # print([len(v) for v in var_labels])
-    # print(data.shape)
-    axis_lengths = tuple(len(v) for v in var_labels)
-    
-    partial_sol = np.empty( axis_lengths )
-    partial_sol[:] = np.nan
+
+def generate_sample(constraints, axis_lengths, num_samples, partial_sol = None):
+    if partial_sol is None:    
+        partial_sol = np.empty( axis_lengths )
+        partial_sol[:] = np.nan
     
     constraint_vals = [v for v in constraints.values()]
     constr_keys = [k for k in constraints.keys()]
 
     bounds = np.asarray([list(cval.values()) for cval in constraint_vals])
     return generatesSample( #7, 3, 12, 
-        axis_lengths,
-        1, bounds, constr_keys, partial_sol, None, None, 'foo')
+        axis_lengths, num_samples, bounds, constr_keys, partial_sol) # , None, None, 'synth')
+    
+def example_main():
+    from learner import run_on_nurse_csv
+    _data, constraints, var_labels = run_on_nurse_csv()
+    # print([len(v) for v in var_labels])
+    # print(data.shape)
+    axis_lengths = tuple(len(v) for v in var_labels)
+
+    partial_sol = np.empty( axis_lengths )
+    partial_sol[:] = np.nan
+    return generate_sample(constraints, axis_lengths, 1, partial_sol)
+
     
 if __name__ == "__main__":
     print(example_main())

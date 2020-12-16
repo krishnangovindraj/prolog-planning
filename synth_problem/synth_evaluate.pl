@@ -4,29 +4,13 @@
 
 :- consult('synth_sql.pl').
 :- use_module(synth_wrangling).
-
+:- use_module(synth_utils).
 % multi- A set of outputs (one-by-one)
 % non-det: Multiple disjoint outputs 
 % multi-non-det: multiple-disjoint sets of outputs
 
 % TODO: Result caching layer to not make the same call over and over.
 % TODO: Better argument names
-
-% Utils: Maybe I should move this to planning_utils?
-% Checks if there are 2 term which match exactly with Member. (i.e., one other than member itself) 
-% -, +, +
-no_duplicate_in_state(Member, State):-
-     % this:member/2 as  ==:=.
-    copy_term(Member, MemberTemplate),
-    findall( M, (
-            M = MemberTemplate,
-            check_predicate_in_state(M, State), % unifies
-            M == Member % Checks if unification was required to make them equal.
-        ), MList),
-    % MLL == 0 .
-    length(MList, MLL),
-    MLL < 2. % < 2 if you're doing the final state version. else == 0.
-    
 
 %   %   %   %   %
 %   Remote calls 
@@ -64,6 +48,8 @@ synth_get_field_headers(TableId, NHeaderRows, FieldHeaderList, FHLLength):-
 synth_learn_countor(TensorId, Constraints):-
     query_synth( learn_countor(TensorId, Constraints) ).
 
+synth_generate_countor(Constraints, NewTensorId):-
+    query_synth( generate_countor(Constraints, NewTensorId) ).
 
 
 %   %   %   %   %
@@ -82,7 +68,7 @@ synth_fold_tensor(TsrId, AxisI, AggOp, NewTsrId):-
 synth_inner_join(
         T1Id, T2Id,      % +, +
         JoinSpec,      % in or out: ?
-        State,   
+        _State,   
         table(SSId, T3Id, NRows, NCols) % out: -, -, -, -
     ):-
     % Supports +- for 

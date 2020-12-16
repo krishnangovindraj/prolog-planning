@@ -141,7 +141,16 @@ class Tensor(Storable):
             tensor.append(level)
         return tensor
 
-    
+    @staticmethod
+    def pad_to_size_3(data, vars):
+        if len(data.shape) < 3:            
+            from numpy import reshape as np_reshape
+            next_data = np_reshape(data, (1,) + data.shape)
+            next_variables = [["dummy"]] + variables
+            return Tensor.pad_to_size_3(next_data, next_variables)
+        else:
+            return data, vars
+
     def __str__(self):
         return "Tensor(%s,%s)]"%(
             self.data_type, self.shape
@@ -154,10 +163,11 @@ class Constraint(Storable):
         Constraint.CSTR_ID_AI += 1            # Not thread-safe
         return 'cstr_' + str(Constraint.CSTR_ID_AI)
 
-    def __init__(self, cstr_type: str, cstr):
+    def __init__(self, constraint_type: str, constraint_object, base_tensor_id):
         super(Constraint, self).__init__(Constraint.get_next_id())
-        self.cstr_type = cstr_type
-        self.cstr  = cstr
+        self.constraint_type = constraint_type
+        self.constraint_object = constraint_object
+        self.base_tensor_id = base_tensor_id
     
 
 class Record:

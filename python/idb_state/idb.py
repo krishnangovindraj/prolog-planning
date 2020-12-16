@@ -27,27 +27,27 @@ class IDB:
         self.spreadsheets[ss._id] = ss
         ss._in_db = True 
 
-    def get_spreadsheet(self, ss_id):
+    def get_spreadsheet(self, ss_id) -> SpreadSheet:
         return self.spreadsheets[ss_id]
     
     def add_table(self, tbl: Table):
         self.tables[tbl._id] = tbl
         tbl._in_db = True
 
-    def get_table(self, tbl_id):
+    def get_table(self, tbl_id) -> Table:
         return self.tables[tbl_id]
 
     def add_tensor(self, tsr: Tensor):
         self.tensors[tsr._id] = tsr
         tsr._in_db = True
 
-    def get_tensor(self, tsr_id):
+    def get_tensor(self, tsr_id) -> Tensor:
         return self.tensors[tsr_id]
 
     def add_constraint(self, cstr: Constraint):
         self.constraints[cstr._id] = cstr
         cstr._in_db = True
 
-    def get_constraint(self, cstr_id):
+    def get_constraint(self, cstr_id) -> Constraint:
         return self.constraints[cstr_id]
 
