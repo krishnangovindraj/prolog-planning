@@ -9,12 +9,19 @@ perform(X):-
     synth_evaluate:X.
 
 
+synth_safe_evaluate(MustBeGroundList, _):-
+    not(ground(MustBeGroundList)).
+
+synth_safe_evaluate(MustBeGroundList, P):-
+    ground(MustBeGroundList), P.
+
+
 initial_state(IS):-
     findall(data_source_path(F,P), data_source_path(F,P), IS).
 
 
-data_source(test_tables, spreadsheet).
-data_source_path(test_tables, '/mnt/e/code/prolog/somethingusefultosynthlog/test_tables_2.csv').
+% data_source(test_tables, spreadsheet).
+% data_source_path(test_tables, '/mnt/e/code/prolog/somethingusefultosynthlog/test_tables_2.csv').
 
-% data_source(nurse_csv, spreadsheet).
-% data_source_path(nurse_csv, '/mnt/e/code/prolog/somethingusefultosynthlog/synth_problem/nurse.csv').
+data_source(nurse_csv, spreadsheet).
+data_source_path(nurse_csv, '/mnt/e/code/prolog/somethingusefultosynthlog/synth_problem/nurse.csv').

@@ -2,6 +2,7 @@ from enum import IntEnum
 from typing import List, Tuple
 from copy import deepcopy
 from os.path import basename, splitext
+import numpy as np
 # NOT THREAD-SAFE
 # TODO: Uncomment the line which increments state_id :p 
 # TODO: Rewrite the whole thing
@@ -120,9 +121,28 @@ class Tensor(Storable):
         super(Tensor, self).__init__(Tensor.get_next_id())
         self.data  = data
         self.variables = variables
-        self.shape = [len(vl) for vl in variables]
+        # self.shape = [len(vl) for vl in variables]
         self.origin_table = origin_table
-        self.data_type = "todo"
+        self.meta = self._compute_meta()
+
+    def _compute_meta(self):
+        import numpy as np
+        
+        if self.data.dtype == np.int32:
+            if self.data.max() in [0,1] and self.data.min() in [0,1]:
+                data_type = Field.DataTypes.DT_INT
+            else:
+                data_type = Field.DataTypes.DT_BOOL
+        else:
+            data_type = Field.DataTypes.DT_REAL
+        
+        
+        ne = 1
+        for s in self.data.shape:
+            ne *= s
+        density = np.count_nonzero(~np.isnan(self.data))/float(ne)
+        
+        return (self.data.shape, data_type, density)
 
     # Easy creation from earlier 
     @staticmethod
@@ -150,7 +170,10 @@ class Tensor(Storable):
                 strip = []
                 for idx in l:
                     if r[idx].strip():
-                        strip.append( int(r[idx]) )
+                        if r[idx].strip() == '?':
+                            strip.append(np_nan)
+                        else:
+                            strip.append( int(r[idx]) )
                     else:
                         strip.append( np_nan )
                 level.append(strip)

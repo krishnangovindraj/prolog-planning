@@ -11,7 +11,7 @@ class TensorFromSpecTask(ActionHandler):
     PREDICATE = 'tensor_from_spec'
 
     class TensorFromSpecPredicate(ActionHandler.ActionPredicate):
-        def __init__(self, table_id, axis_labels, index_map, tensor_id):
+        def __init__(self, table_id, axis_labels, index_map, tensor_id, tensor_meta):
             # TODO : What if they're not json lists?
             self.table_id = table_id
             if isinstance(axis_labels, JSONList):
@@ -22,9 +22,10 @@ class TensorFromSpecTask(ActionHandler):
                 self.index_map = index_map
 
             self.tensor_id = tensor_id
-
+            self.tensor_meta = tensor_meta
+        
         def to_json_compound(self):
-            return JSONCompound(TensorFromSpecTask.PREDICATE, [self.table_id, self.axis_labels, self.index_map, self.tensor_id])
+            return JSONCompound(TensorFromSpecTask.PREDICATE, [self.table_id, self.axis_labels, self.index_map, self.tensor_id, self.tensor_meta])
 
 
     def handle(self):
@@ -36,9 +37,11 @@ class TensorFromSpecTask(ActionHandler):
         tsr = Tensor.from_table_spec(table, req.axis_labels, req.index_map)
         
         self.idb.add_tensor(tsr)
-
+        tsr_meta = list(tsr.meta)
+        tsr_meta[1] = GetFieldTypesTask.FIELD_TYPE_TO_STR[tsr_meta[1]]
+        tensor_meta = JSONCompound('tensor_meta', tsr_meta) 
         # TODO: Fix the encoding of the constraints
         return [ TensorFromSpecTask.TensorFromSpecPredicate(
             req.table_id, req.axis_labels, req.index_map, 
-            tsr.get_id())
+            tsr.get_id(), tensor_meta)
         ]
