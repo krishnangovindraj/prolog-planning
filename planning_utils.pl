@@ -17,7 +17,6 @@ safe_bagof(Template, Test, ResultList):-
 state_query_goal_check(DesiredQuery, State, _ActionPath):-
     not(not(state_satisfies(DesiredQuery, State))). % Might have to avoid unification.
 
-
 % Skolemization, Deskolemization.
 skolemize([]):- !.
 skolemize([H|T]):-

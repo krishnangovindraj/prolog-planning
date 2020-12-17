@@ -1,11 +1,17 @@
-:- use_module(operations, [evaluate_predicate/2, simulate_predicate/2]).
+:- use_module(operations, [evaluate_predicate/1, simulate_predicate/2]).
 % NO. Consult instead. % :- module(state_query, [query_state/2]).
 
 %% query_state(Query, State):-
 query_state([], _).
+
+query_state([evaluate(P, L)|T], L):-
+    !, % Cut so we don't try the member. This version has a state argument.
+    operations:evaluate_predicate(P),
+    query_state(T, L).
+
 query_state([evaluate(P)|T], L):-
     !, % Cut so we don't try the member
-    evaluate_predicate(P,L),
+    operations:evaluate_predicate(P),
     query_state(T, L).
 
 % Assume perform succeeds

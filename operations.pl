@@ -1,7 +1,7 @@
 :- module(operations, [
     initialize_problem/1,
     expand/3, is_applicable_action/2, violates_constraints/2,
-    evaluate_predicate/2, simulate_predicate/2]).
+    evaluate_predicate/1]).
 
 :- use_module(planning_utils, [skolemize/1]).
 :- use_module(representation).
@@ -40,23 +40,12 @@ is_applicable_action(ActionSig, State):-
 violates_constraints(State, _ActionPath):-
     constraint(C), not(state_satisfies(C, State)).
 
-
-% _State is for future use with simulate.
-evaluate_predicate(Predicate, _State):- 
-    Predicate. % call
-
-% You can simulate certain actions so the planner can hyptothesize about likely outcomes and look more steps ahead.
-% Be careful when using unbound variables. They're powerful but quirky.
-% If you want a predicate to be evaluated instead of simulated, just don't declare a simulation
-% If you don't want that to happen and want the user to explicitly choose to perform this action (and dependencies), 
-% you can fail (or succeed by adding a must_evaluate(Action) and then specify must_evaluate(_) as part a potential  goal?)
-simulate_predicate(_Predicate, _State):-
-    writeln("Simulate doesnt' exist yet :("), fail.
+evaluate_predicate(Predicate):- 
+    problem:evaluate_predicate(Predicate).
 
 % +,-: non-det
 evaluate_plan_sketch_with_final_state(PlanSketch, FinalState):-
-    deskolemize(PlanSketch, DPS),
-    epswfs_do(DPS, FinalState).
+    epswfs_do(PlanSketch, FinalState).
 
 epswfs_do([],_):-
     !. % The cut is not needed really
@@ -68,8 +57,7 @@ epswfs_do([ActionSignature|RestOfActions], FinalState):-
 
 % +,+,-: non-det
 evaluate_plan_sketch(PlanSketch, StartState, FinalState):-
-    planning_utils:deskolemize(PlanSketch, DPS),
-    eps_do(DPS, StartState, FinalState).
+    eps_do(PlanSketch, StartState, FinalState).
 
 
 eps_do([], State, State):-

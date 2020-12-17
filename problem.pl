@@ -13,3 +13,6 @@ perform_perform(perform(Perform, State), State):-
 
 perform_perform(perform(Perform), _):-
     perform(Perform).
+
+evaluate_predicate(Predicate):- 
+    Predicate. % call
