@@ -13,7 +13,7 @@ no_duplicate_in_state(Member, State):-
            check_predicate_in_state(M, State), % unifies
            M == Member % Checks if unification was required to make them equal.
        ), MList),
-   % MLL == 0 .
-   length(MList, MLL),
-   MLL < 2. % < 2 if you're doing the final state version. else == 0.
+    length(MList, MLL),
+    MLL == 0 .
+%    MLL < 2. % < 2 if you're doing the final state version. else == 0.
    

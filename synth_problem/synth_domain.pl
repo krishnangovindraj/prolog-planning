@@ -2,4 +2,4 @@
 
 :- consult('domain/domain_meta.pl').
 % :- consult('domain/domain_sql.pl').
-:- consult('domain/domain_tensor.pl').
+% :- consult('domain/domain_tensor.pl').

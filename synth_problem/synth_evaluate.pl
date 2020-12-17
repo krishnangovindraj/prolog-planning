@@ -1,8 +1,9 @@
 :- module(synth_evaluate, []).
 
 :- consult('evaluate/evaluate_meta.pl').
-
 :- consult('evaluate/evaluate_tensor.pl').
+:- consult('evaluate/evaluate_utils.pl').
+
 % If I still use these terms, they mean:
 % multi- A set of outputs (one-by-one)
 % non-det: Multiple disjoint outputs 

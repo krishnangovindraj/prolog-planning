@@ -15,6 +15,10 @@ synth_detect_tables(SpreadsheetId, TableList, TLLength):-
     query_synth(detect_tables(SpreadsheetId, TableList)),
     length(TableList, TLLength).
 
+synth_get_table_cell(TableId, RelX, RelY, Val):-
+    query_synth(get_table_contents(TableId, CellList)),
+    member(table_cell(TableId, RelX, RelY, Val), CellList).
+
 % +, -, - % det for now. No alternatives to the field_types.
 synth_get_field_types(TableId, FieldTypes, FieldTypeLength):-
     query_synth(get_field_types(TableId, FieldTypes)),

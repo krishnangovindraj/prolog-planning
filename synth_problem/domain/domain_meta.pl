@@ -18,7 +18,7 @@ action(
 
 % Can't guarantee the same table doesn't get added twice from here. Do it within 
 action(
-    get_table(SSId, TableList, TableId), 
+    get_table(SSId, TableList, TableId, NRows, NCols), 
     [table_list(SSId, TableList, _TLLength)], 
     [],
     [table(SSId, TableId, NRows, NCols)],
@@ -28,30 +28,50 @@ action(
     ]
 ).
 
-
 action(
-    get_all_field_types(TableId, FieldTypeList, FTLLength),
-    [ table(_S, TableId, _NRows, _NCols), not([field_type_list(TableId, _, _)])],
-    [ ],
-    [ field_type_list(TableId, FieldTypeList, FTLLength) ],
-    [perform(synth_get_field_types(TableId, FieldTypeList, FTLLength))]
-).
-
-
-action(
-    get_incomplete_fields(TableId, NHeaderRows, IncompleteFieldList, IFLLength),
-    [ table(_S, TableId, _NRows, _NCols), not([incomplete_field_list(TableId, _, _)]),
-        field_header_list(TableId, NHeaderRows, _, _) ],
-    [ ],
-    [ incomplete_field_list(TableId, IncompleteFieldList, IFLLength) ],
-    [perform(synth_get_incomplete_fields(TableId, NHeaderRows, IncompleteFieldList, IFLLength))]
-).
-
-
-action(
-    get_all_field_headers(TableId, FieldHeaderList, FHLLength),
-    [table(_S, TableId, _NRows, _NCols), not([field_header_list(TableId, _, _, _)])],
+    get_table_title(TableId, Title),
+    [table(_SSId, TableId, _, _ ), not([table_title(TableId, Title)])],
     [],
-    [field_header_list(TableId, NHeaderRows, FieldHeaderList, FHLLength)],
-    [perform(synth_get_field_headers(TableId, NHeaderRows, FieldHeaderList, FHLLength))]
+    [table_title(TableId, Title)],
+    [perform(synth_get_table_cell(TableId, 0, 0, Title))]
 ).
+
+
+% action(
+%     get_all_field_types(TableId, FieldTypeList, FTLLength),
+%     [ table(_S, TableId, _NRows, _NCols), not([field_type_list(TableId, _, _)])],
+%     [ ],
+%     [ field_type_list(TableId, FieldTypeList, FTLLength) ],
+%     [perform(synth_get_field_types(TableId, FieldTypeList, FTLLength))]
+% ).
+
+
+% action(
+%     get_incomplete_fields(TableId, NHeaderRows, IncompleteFieldList, IFLLength),
+%     [ table(_S, TableId, _NRows, _NCols), not([incomplete_field_list(TableId, _, _)]),
+%         field_header_list(TableId, NHeaderRows, _, _) ],
+%     [ ],
+%     [ incomplete_field_list(TableId, IncompleteFieldList, IFLLength) ],
+%     [perform(synth_get_incomplete_fields(TableId, NHeaderRows, IncompleteFieldList, IFLLength))]
+% ).
+
+
+% action(
+%     get_all_field_headers(TableId, NHeaderRows, FieldHeaderList, FHLLength),
+%     [table(_S, TableId, _NRows, _NCols), not([field_header_list(TableId, _, _, _)])],
+%     [],
+%     [field_header_list(TableId, NHeaderRows, FieldHeaderList, FHLLength)],
+%     [perform(synth_get_field_headers(TableId, NHeaderRows, FieldHeaderList, FHLLength))]
+% ).
+
+% % Easy goal so I don't have to do the steps.
+% action(
+%     checkpoint_table_all_meta(TId),
+%     [not([all_meta_loaded(TId)]), 
+%         table(_, TId, _, _), field_header_list(TId, _, _, _), field_type_list(TId,_,_),
+%         incomplete_field_list( TId, _, _)
+%     ],
+%     [],
+%     [all_meta_loaded(TId)],
+%     []
+% ).

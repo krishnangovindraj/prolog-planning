@@ -3,11 +3,14 @@ from .action_handler import ActionHandler
 from .test_protocol import TestProtocolTask
 from .dump_storable import DumpStorableTask
 
+from .load_spreadsheet import LoadSpreadsheetTask
 from .detect_tables import DetectTablesTask
+
+from .get_table_contents import GetTableContentsTask
 from .get_fields import GetFieldTypesTask
 from .get_field_headers import GetFieldHeadersTask
 from .get_incomplete_fields import GetIncompleteFieldsTask
-from .load_spreadsheet import LoadSpreadsheetTask
+
 
 from .tensor_from_spec import TensorFromSpecTask
 from .fold_tensor import FoldTensorTask
@@ -28,6 +31,7 @@ AVAILABLE_TASKS = {
 
     DetectTablesTask.PREDICATE: DetectTablesTask,
     LoadSpreadsheetTask.PREDICATE: LoadSpreadsheetTask,
+    GetTableContentsTask.PREDICATE: GetTableContentsTask,
     GetFieldTypesTask.PREDICATE: GetFieldTypesTask,
     GetFieldHeadersTask.PREDICATE: GetFieldHeadersTask,
     GetIncompleteFieldsTask.PREDICATE: GetIncompleteFieldsTask,
