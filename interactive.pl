@@ -95,6 +95,7 @@ apply_action_path_do([], CurrentState):-
 
 apply_action_path_do([Action|Tail], interactive_state([Action|PathTo], ResultState)):-
     apply_action_path_do(Tail, interactive_state(PathTo, StateAt)),
+    format("\n\t- ~k", Action),
     state_apply_action(StateAt, Action, ResultState).
 
 % The interactive state stack (None of the non-interactive intermediates)?
