@@ -1,4 +1,4 @@
-:- module(interactive, [interactive_init/1, one_iter/0,
+:- module(interactive, [interactive_init/1, one_iter/0, one_search/2,
     get_current_action_path/1, query_current_state/1, apply_action_path/1, apply_action_path/2,
     perform_search/3, perform_search_all_goals/3]).
 % Some interaction would be nice when you don't know the result of actions.
@@ -12,10 +12,20 @@
 one_iter:-
     interactive:get_current_state(S),
     interactive:get_applicable_action(AL),
-    member(A,AL),
+    planning_utils:deskolemize(AL, DAL),
+    member(A,DAL),
     is_yn_prompt("Sketch action:\n\t ~k", [A]),
     operations:evaluate_plan_sketch([A],S, _F), is_yn_prompt("Apply Action:\n\t ~k", [A]),
     interactive:apply_action_path([A]).
+
+% +,+
+one_search(GoalPredList, SearchDepth):-
+    perform_search(GoalPredList, SearchDepth, SkGoalPath),
+    planning_utils:deskolemize(SkGoalPath, GoalPath),
+    get_current_state(S),
+    is_yn_prompt("\nSketch plan: ~k", [GoalPath]), !, operations:evaluate_plan_sketch(GoalPath, S, _FinalState),
+    is_yn_prompt("\nApply plan: ~k", [GoalPath]), !, apply_action_path(GoalPath).
+
 
 is_load(X):-
     nb_getval(is_stored_val, X).
@@ -75,7 +85,6 @@ apply_action_path(ActionPath, ResultState):-
     ground(ActionPath),
     apply_action_path_do(ActionPath, ResultState),
     interactive_stack_push(ResultState). % Just to be sure.
-    
 
 % e.g.: perform_search([on(b,c)], 4, Path).
 perform_search(GoalPredicates, Depth, GoalPath):-
