@@ -3,7 +3,7 @@
     expand/3, is_applicable_action/2, violates_constraints/2,
     evaluate_predicate/2, simulate_predicate/2]).
 
-
+:- use_module(planning_utils, [skolemize/1]).
 :- use_module(representation).
 :- use_module(state_manipulation, [state_satisfies/2, state_apply_action/3]).
 
@@ -26,7 +26,8 @@ initialize_problem(ProblemFile):-
 % expand(+ActionPath, +State, -Children)
 expand(_ActionPath, State, Children):-
     % TIL: The difference between findall and bagof
-    (bagof(ActionSig, is_applicable_action(ActionSig, State), Children) -> true; Children=[]).
+    (bagof(ActionSig, is_applicable_action(ActionSig, State), Children) -> true; Children=[]),
+    planning_utils:skolemize(Children).
 
 
 % Produces every applicable action signature. Will be ground if State is ground.
@@ -54,7 +55,8 @@ simulate_predicate(_Predicate, _State):-
 
 % +,-: non-det
 evaluate_plan_sketch_with_final_state(PlanSketch, FinalState):-
-    epswfs_do(PlanSketch, FinalState).
+    deskolemize(PlanSketch, DPS),
+    epswfs_do(DPS, FinalState).
 
 epswfs_do([],_):-
     !. % The cut is not needed really
@@ -66,7 +68,8 @@ epswfs_do([ActionSignature|RestOfActions], FinalState):-
 
 % +,+,-: non-det
 evaluate_plan_sketch(PlanSketch, StartState, FinalState):-
-    eps_do(PlanSketch, StartState, FinalState).
+    planning_utils:deskolemize(PlanSketch, DPS),
+    eps_do(DPS, StartState, FinalState).
 
 
 eps_do([], State, State):-
