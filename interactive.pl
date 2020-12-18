@@ -1,6 +1,6 @@
-:- module(interactive, [interactive_init/1, one_iter/0, one_search/2,
+:- module(interactive, [interactive_init/1, one_iter/1, one_search/2,
     get_current_action_path/1, query_current_state/1, apply_action_path/1, apply_action_path/2,
-    perform_search/3, perform_search_all_goals/3]).
+    perform_search/3, perform_search_action/3]).
 % Some interaction would be nice when you don't know the result of actions.
 :-use_module(operations).
 :-use_module(state_manipulation).
@@ -9,7 +9,8 @@
 
 :- dynamic interactive_stack_element/3. % P, StackPrev, State 
 
-one_iter:-
+% A = ActionTemplate
+one_iter(A):-
     interactive:get_current_state(S),
     interactive:get_applicable_action(AL),
     planning_utils:deskolemize(AL, DAL),
@@ -85,16 +86,17 @@ apply_action_path(ActionPath, ResultState):-
     ground(ActionPath),
     apply_action_path_do(ActionPath, ResultState),
     interactive_stack_push(ResultState). % Just to be sure.
-
+    
+perform_search_action(GoalActions, Depth, GoalPath):-
+    GoalCheck = planning_utils:actionpath_query_goal_check(GoalActions),
+    interactive_stack_peek(interactive_state(_, CurrentState)),
+    search_forward_dfs(CurrentState, GoalCheck, Depth, GoalPath).
+    
 % e.g.: perform_search([on(b,c)], 4, Path).
 perform_search(GoalPredicates, Depth, GoalPath):-
-    perform_search_all_goals(GoalPredicates, Depth, GoalPaths),
-    member(GoalPath, GoalPaths).
-
-perform_search_all_goals(GoalPredicates, Depth, GoalPaths):-
     GoalCheck = planning_utils:state_query_goal_check(GoalPredicates),
     interactive_stack_peek(interactive_state(_, CurrentState)),
-    search_forward_dfs(CurrentState, GoalCheck, Depth, GoalPaths).
+    search_forward_dfs(CurrentState, GoalCheck, Depth, GoalPath).
 
 
 % Private
