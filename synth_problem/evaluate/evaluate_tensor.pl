@@ -20,3 +20,12 @@ synth_fill_countor(Constraints, FillTensorId, NewTensorId):-
     query_synth( fill_countor(Constraints, FillTensorId, NewTensorId) ).
 
 
+synth_tensor_fold_meta(OriginalShape, FoldAxis, NewShape):-
+    evaluate_wrangling:synth_tensor_fold_meta_impl(OriginalShape, FoldAxis, NewShape).
+
+
+% TODO: 
+% synth_aggregate_operator_choice(dt_real, op_max).
+% synth_aggregate_operator_choice(dt_real, op_min).
+% synth_aggregate_operator_choice(dt_real, op_sum).
+% synth_aggregate_operator_choice(dt_real, op_avg).

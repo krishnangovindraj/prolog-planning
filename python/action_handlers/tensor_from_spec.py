@@ -38,6 +38,7 @@ class TensorFromSpecTask(ActionHandler):
         
         self.idb.add_tensor(tsr)
         tsr_meta = list(tsr.meta)
+        tsr_meta[0] = list(tsr_meta[0])
         tsr_meta[1] = GetFieldTypesTask.FIELD_TYPE_TO_STR[tsr_meta[1]]
         tensor_meta = JSONCompound('tensor_meta', tsr_meta) 
         # TODO: Fix the encoding of the constraints

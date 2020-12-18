@@ -181,14 +181,14 @@ class Tensor(Storable):
         return tensor
 
     @staticmethod
-    def pad_to_size_3(data, vars):
+    def pad_to_size_3(data, variables):
         if len(data.shape) < 3:            
             from numpy import reshape as np_reshape
             next_data = np_reshape(data, (1,) + data.shape)
             next_variables = [["dummy"]] + variables
             return Tensor.pad_to_size_3(next_data, next_variables)
         else:
-            return data, vars
+            return data, variables
 
     
     def dump(self):
@@ -198,7 +198,7 @@ class Tensor(Storable):
 
     def __str__(self):
         return "Tensor(%s,%s)]"%(
-            self.data_type, self.shape
+            self.get_id(), str(self.meta)
         )
 
 class Constraint(Storable):

@@ -3,6 +3,8 @@
 :- use_module(state_manipulation).
 % Not actually wrangling, but I can't spend time thinking about good names.
 
+
+
 % +, +, -, -
 synth_detect_tensors_impl(TableId, FieldHeaderList, AxisLabels, IndexMap):-
     % TODO: Fix inefficient declarative:
@@ -29,7 +31,7 @@ rec_header_factorize(HeaderList, Factor1, Factor2):-
     
     % Anyway, the other direction.
     member(X/YList, XYList),
-    length(YList, LengthYL), LengthYL > 1, % Else it's not part of a tensor
+    length(YList, LengthYL), % LengthYL > 1, % Else it's not part of a tensor % HACK: TODO: UNCOMMENT?!
     findall(X1, member(X1/YList, XYList) , XList_Duplicates),
     list_to_set(XList_Duplicates, XList),
     XList = [X|_], % De-duplication. The first is the representative.
@@ -51,3 +53,17 @@ create_index_map(FieldHeaderList, HeaderAxes, IndexMap):-
         IndexMap
     ).
 
+
+
+
+
+synth_tensor_fold_meta_impl(OriginalShape, FoldAxis, NewShape):-
+    nth0(FoldAxis, OriginalShape, _),
+    replace_nth(FoldAxis, 1, OriginalShape, NewShape).
+
+replace_nth(0, WithWhat, [_|T], [WithWhat|T]):- !.
+
+replace_nth(N, WithWhat, [H|T], [H|DT]):-
+    N>0, 
+    N1 is N-1,
+    replace_nth(N1, WithWhat, T, DT).

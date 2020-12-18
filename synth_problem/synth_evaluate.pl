@@ -11,3 +11,6 @@
 
 % TODO: Result caching layer to not make the same call over and over.
 % TODO: Better argument names
+
+synth_aggregate_operator_choice(_, agg_or).
+% synth_aggregate_operator_choice(_, agg_and).

@@ -13,7 +13,7 @@ synth_safe_evaluate(MustBeGroundList, _):-
     not(ground(MustBeGroundList)).
 
 synth_safe_evaluate(MustBeGroundList, P):-
-    ground(MustBeGroundList), P.
+    ground(MustBeGroundList), synth_evaluate:P.
 
 
 initial_state(IS):-
@@ -25,3 +25,4 @@ initial_state(IS):-
 
 data_source(nurse_csv, spreadsheet).
 data_source_path(nurse_csv, '/mnt/e/code/prolog/somethingusefultosynthlog/synth_problem/nurse.csv').
+
