@@ -4,8 +4,12 @@
     do_loop_detection/1, hash_collision_is_loop/1,
     check_predicate_in_state/2]).
 
+
+% The assert based states are faster. Simple state helps easy debugging.
+% assert_state_dfs has special loop_detection (works only with dfs) and may be marginally faster.
+
 % :- use_module('state_management/simple_state.pl').
-% :- use_module('state_management/ordered_state.pl').
+% :- use_module('state_management/ordered_state.pl'). % Not sure this works. Avoid.
 % :- use_module('state_management/assert_state.pl').
 :- use_module('state_management/assert_state_dfs.pl').
 

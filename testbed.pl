@@ -2,6 +2,7 @@
 :- use_module(operations).
 :- use_module(state_manipulation).
 :- use_module(forward_dfs).
+:- use_module(forward_dfs_por). % USE search_forward_dfs_por if you want to do POR as well. There's an overhead which is tough to take for small problems. 
 :- use_module(interactive).
 
 % Usage: 
