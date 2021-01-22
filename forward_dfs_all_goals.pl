@@ -1,3 +1,5 @@
+% forward_dfs, but search finds all solutions at once.
+% I don't think you'd ever want to use this.
 % A naive but tidy generic DFS with loop detection from the state representations. 
 :- module(forward_dfs, [search_forward_dfs/4]).
 :- use_module(state_manipulation).

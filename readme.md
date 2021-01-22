@@ -7,7 +7,8 @@ This cannot be used for serious planning problems. If that's what you need, Use 
 ## Components
 * A declarative problem representation based on action/4:
     `action(ActionSignature, PreconditionList, DeleteList, AddList).`    
-* A lazy DFS with a depth-limit (and sometimes loop-detection), to do forward planning. 
+* A DFS with a depth-limit (and sometimes loop-detection), to do forward planning. 
+* A DFS as above, but with some partial-order-reduction based on sleep-sets.
 * A really inefficient way of supporting constraints on the state 
     - by literally querying the state against the constraints after every action.
 * (in-progress) A minimal and (hopefully) easy way to explore plans which need some interaction, so you don't have to trace/spy. 
