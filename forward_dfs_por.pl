@@ -85,7 +85,7 @@ wake_all_disablers__wake_list([H|T]):-
 % tl;dr of dpor: If a,b are commutative, the plans <X,a,b,Y> and <X,b,a,Y> are equivalent.
 %   To prevent this, suppose you have finished exploring at <X,a>. This means you have seen <X,a,b,*> 
 % You now put a to sleep. As long as a is asleep, it will never occur any following schedule  <X,*>
-% For a simple example, it means for 3 actions [a,b,c], you'd only execute, [a,b,c], [b,c], [c] if a,b,c were all commutative.
+% For a simple example, it means for 3 actions [a,b,c], you'd only execute, [a,b,c], [a,c], [b,c], [c] if a,b,c were all commutative.
 % The complication occurs when a,b are not commutative.
 %   Since actions either add or subtract from a set, these operations being commutative guarantee that the actions themselves would be commutative, should they execute.
 % Hence, the only non-commutativity (that I'm aware of, atleast) is when an action a disables b. In such a case, in <X,a,Y>, Y will never contain b.
