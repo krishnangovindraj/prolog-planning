@@ -44,7 +44,7 @@ check_predicate_in_state(Predicate, assert_state(StateId, _Meta)):-
 % Applies action on state 
 % state_apply_action(+State, +Action, -ResultState)
 state_apply_action(assert_state(StateId, Meta), Action, assert_state(ResultStateId, ResultMeta)):-
-    action(Action, _Precond, DeleteList, AddList),
+    action(Action, _Precond, DeleteList, AddList, _PerformList),
     counter_get_next(ResultStateId),
     foreach(
         asserted_state(StateId, S), 

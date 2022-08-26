@@ -1,58 +1,23 @@
 :- module(representation, [
-    initialize_problem/1,
-    action/4, initial_state/1, goal_check/2, constraint/1,
-    action_signature/1, expand/3, is_applicable_action/2, violates_constraints/2,
-    evaluate_predicate/2, simulate_predicate/2]).
+    load_problem/1,
+    action/5, initial_state/1, goal_check/2, constraint/1]).
 
-:- use_module(state_manipulation, [state_satisfies/2]).
+:- use_module(problem, []).
 
-:- dynamic action/4, initial_state/1, goal_check/2, constraint/1.
+load_problem(ProblemFile):-
+    problem:do_consult_problem(ProblemFile).
 
-% initialize_problem(+ProblemFile).
-:- dynamic initialize_problem__done/1.
+action(ActionSig, PreCond, DeleteList, AddList, PerformList):-
+    problem:action(ActionSig, PreCond, DeleteList, AddList, PerformList).
 
-initialize_problem(ProblemFile):-
-    initialize_problem__done(P),!,
-    (
-        (P = ProblemFile) -> 
-        (writeln("WARN: Already initialized")); 
-        (writeln(["ERROR: Session already initialized with ", ProblemFile]), fail)
-    ).
+action(ActionSig, PreCond, DeleteList, AddList, []):-
+    problem:action(ActionSig, PreCond, DeleteList, AddList).
 
-initialize_problem(ProblemFile):- 
-    consult(ProblemFile),
-    assert(initialize_problem__done(ProblemFile)).
+initial_state(S):-
+    problem:initial_state(S).
 
-% action_signature(?ActionSig).
-action_signature(AS):-
-    action(AS, _, _, _).
+goal_check(ActionPath, State):-
+    problem:goal_check(ActionPath, State).
 
-% expand(+ActionPath, +State, -Children)
-expand(_ActionPath, State, Children):-
-    % Find potential actions right?
-    findall(ActionSig, (action_signature(ActionSig), is_applicable_action(ActionSig, State)), Children).
-
-
-% Produces every applicable action signature. Will be ground if State is ground.
-% is_applicable_action(+ActionSig, ?State)
-is_applicable_action(ActionSig, State):-
-    action(ActionSig, Preconditions, _, _), 
-    state_satisfies(Preconditions, State).
-
-% violates_constraints(+State, +ActionPath)
-violates_constraints(State, _ActionPath):-
-    constraint(C), not(state_satisfies(C, State)).
-
-
-
-% _State is for future use with simulate.
-evaluate_predicate(Predicate, _State):- 
-    Predicate. % call
-
-% You can simulate certain actions so the planner can hyptothesize about likely outcomes and look more steps ahead.
-% Be careful when using unbound variables. They're powerful but quirky.
-% If you want a predicate to be evaluated instead of simulated, just don't declare a simulation
-% If you don't want that to happen and want the user to explicitly choose to perform this action (and dependencies), 
-% you can fail (or succeed by adding a must_evaluate(Action) and then specify must_evaluate(_) as part a potential  goal?)
-simulate_predicate(_Predicate, _State):-
-    writeln("Simulate doesnt' exist yet :("), fail.
+constraint(C):- 
+    problem:constraint(C).
